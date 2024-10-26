@@ -26,12 +26,14 @@
         <npm.version>10.2.3</npm.version>
         <node.version>v20.10.0</node.version>
         <lombok.version>1.18.30</lombok.version>
+        <jsonwebtoken.version>0.12.6</jsonwebtoken.version>
         <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <artifactId>quik</artifactId>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <start.class>main.server.ServerApplication</start.class>
+
 
     </properties>
     <dependencies>
@@ -128,6 +130,30 @@
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <!--Authentication-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!--        https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api-->
+
     </dependencies>
     <build>
         <sourceDirectory>Backend/src</sourceDirectory>
