@@ -31,27 +31,7 @@ public class JwtService {
 		this.requestLogger = LogManager.getLogger(ServerConstants.REQUEST_LOGGER_NAME);
 	}
 
-	//	public String extractUsername(String token) {
-//		return extractClaim(token, Claims::getSubject);
-//	}
-//
-//	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-//		final Claims claims = extractAllClaims(token);
-//		return claimsResolver.apply(claims);
-//	}
-//
-//	public String generateToken(UserDetails userDetails) {
-//		return generateToken(new HashMap<>(), userDetails);
-//	}
-//
-//	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-//		return buildToken(extraClaims, userDetails, jwtExpiration);
-//	}
-//
-//	public long getExpirationTime() {
-//		return jwtExpiration;
-//	}
-//
+	//
 //	private String buildToken(
 //			Map<String, Object> extraClaims,
 //			UserDetails userDetails,
@@ -97,6 +77,27 @@ public class JwtService {
 		SecretKey key = Jwts.SIG.HS256.key().build();
 		// Encode the key to a Base64 string for easier handling
 		return Base64.getEncoder().encodeToString(key.getEncoded());
+	}
+
+	//	public String extractUsername(String token) {
+//		return extractClaim(token, Claims::getSubject);
+//	}
+//
+//	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+//		final Claims claims = extractAllClaims(token);
+//		return claimsResolver.apply(claims);
+//	}
+//
+//	public String generateToken(UserDetails userDetails) {
+//		return generateToken(new HashMap<>(), userDetails);
+//	}
+//
+//	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+//		return buildToken(extraClaims, userDetails, jwtExpiration);
+//	}
+//
+	public long getExpirationTime() {
+		return jwtExpirationMs;
 	}
 
 	private SecretKey getSignInKey() {
