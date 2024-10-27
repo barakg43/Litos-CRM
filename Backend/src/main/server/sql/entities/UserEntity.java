@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 public class UserEntity implements UserDetails {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Integer id;
 	@Column(nullable = false)
@@ -26,10 +26,10 @@ public class UserEntity implements UserDetails {
 	@Column(nullable = false)
 	private boolean enabled;
 	@CreationTimestamp
-	@Column(updatable = false, name = "created_at")
+	@Column(updatable = false, columnDefinition = "smalldatetime")
 	private Date createdAt;
 	@UpdateTimestamp
-	@Column(name = "updated_at")
+	@Column(columnDefinition = "smalldatetime")
 	private Date updatedAt;
 
 	public UserEntity(String fullName, String email, String password) {
