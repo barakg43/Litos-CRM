@@ -17,6 +17,8 @@ public class UserEntity implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
 	private Integer id;
+	@Column(nullable = false, length = 20, unique = true)
+	private String username;
 	@Column(nullable = false)
 	private String fullName;
 	@Column(unique = true, length = 100, nullable = false)
@@ -32,10 +34,12 @@ public class UserEntity implements UserDetails {
 	@Column(columnDefinition = "smalldatetime")
 	private Date updatedAt;
 
-	public UserEntity(String fullName, String email, String password) {
+	public UserEntity(String username, String fullName, String email, String password) {
+		this.username = username;
 		this.fullName = fullName;
 		this.email = email;
 		this.password = password;
+		this.enabled = true;
 	}
 
 	public UserEntity() {
