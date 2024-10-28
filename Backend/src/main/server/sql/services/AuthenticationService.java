@@ -36,12 +36,12 @@ public class AuthenticationService {
 	public UserEntity authenticate(LoginUserRecord input) {
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
-						input.email(),
+						input.username(),
 						input.password()
 				)
 		);
 
-		return userRepository.findByEmail(input.email())
+		return userRepository.findByUsername(input.username())
 				.orElseThrow();
 	}
 }
