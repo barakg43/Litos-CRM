@@ -40,7 +40,7 @@ public class SecurityConfig {
 	}
 
 	public JwtAuthenticationFilter authenticationJwtTokenFilter() {
-		return new JwtAuthenticationFilter(handlerExceptionResolver, jwtService, userDetailsService());
+		return new JwtAuthenticationFilter(jwtService, handlerExceptionResolver, userDetailsService());
 	}
 
 	@Bean
@@ -58,10 +58,8 @@ public class SecurityConfig {
 //				.cors(Customizer.withDefaults())
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/quik/api-docs/**").permitAll()
-						.requestMatchers("/quik/swagger-ui/**").permitAll()
+						.requestMatchers("/api-docs/**").permitAll()
 						.requestMatchers("/swagger-ui/**").permitAll()
-						.requestMatchers("/quik/api/auth/**").permitAll()
 						.anyRequest().authenticated()
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
