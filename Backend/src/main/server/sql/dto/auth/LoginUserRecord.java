@@ -1,5 +1,5 @@
 package main.server.sql.dto.auth;
 
-public record LoginUserRecord(String email, String password) {
+public record LoginUserRecord(String username, String password) {
 
 }
