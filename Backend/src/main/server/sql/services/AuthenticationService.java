@@ -28,7 +28,8 @@ public class AuthenticationService {
 	}
 
 	public UserEntity signup(RegisterUserDto input) {
-		UserEntity user = new UserEntity(input.fullName(), input.email(), passwordEncoder.encode(input.password()));
+		UserEntity user = new UserEntity(input.username(), input.fullName(), input.email(),
+				passwordEncoder.encode(input.password()));
 
 		return userRepository.save(user);
 	}
