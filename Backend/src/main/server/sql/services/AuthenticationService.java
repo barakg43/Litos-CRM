@@ -4,6 +4,7 @@ import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.UserRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ public class AuthenticationService {
 
 	private final AuthenticationManager authenticationManager;
 
+	@Lazy
 	public AuthenticationService(
 			UserRepository userRepository,
 			AuthenticationManager authenticationManager,
