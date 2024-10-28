@@ -3,6 +3,7 @@ package main.server.config.security;
 import main.server.sql.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.List;
 
@@ -27,18 +29,29 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 	private final UserRepository userRepository;
+	private final HandlerExceptionResolver handlerExceptionResolver;
+	private final JwtService jwtService;
 
-	public SecurityConfig(UserRepository userRepository) {
+	public SecurityConfig(UserRepository userRepository, HandlerExceptionResolver handlerExceptionResolver,
+						  JwtService jwtService) {
 		this.userRepository = userRepository;
-//		this.authenticationManager = authenticationManager;
+		this.handlerExceptionResolver = handlerExceptionResolver;
+		this.jwtService = jwtService;
 	}
 
-	@Bean
 	public JwtAuthenticationFilter authenticationJwtTokenFilter() {
-		return new JwtAuthenticationFilter();
+		return new JwtAuthenticationFilter(handlerExceptionResolver, jwtService, userDetailsService());
 	}
 
 	@Bean
+	@Order(1)
+	UserDetailsService userDetailsService() {
+		return username -> userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+	}
+
+	@Bean
+	@Order(2)
 	public DefaultSecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf(AbstractHttpConfigurer::disable)
@@ -59,11 +72,6 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Bean
-	UserDetailsService userDetailsService() {
-		return username -> userRepository.findByUsername(username)
-				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
-	}
 
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
