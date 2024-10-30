@@ -23,7 +23,7 @@ import java.util.Date;
 public class JwtService {
 	private final Logger requestLogger;
 	//	@Value("${security.jwt.expiration-time}")
-	private final long jwtExpirationMs = SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE;
+	private final long jwtExpirationMs = SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE * 1000;
 	@Value("${security.jwt.secret-key}")
 	private String secretKey;
 
@@ -124,7 +124,7 @@ public class JwtService {
 				.compact();
 	}
 
-	public String getUserNameFromJwtToken(String token) {
+	public String getUsernameFromJwtToken(String token) {
 		return Jwts.parser()
 				.verifyWith(getSignInKey())
 				.build().
