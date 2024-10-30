@@ -1,4 +1,4 @@
-package main.server.config.security;
+package main.server.config.security.jwt;
 
 
 import io.jsonwebtoken.ExpiredJwtException;

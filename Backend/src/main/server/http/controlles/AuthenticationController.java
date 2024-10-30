@@ -1,7 +1,8 @@
 package main.server.http.controlles;
 
-import main.server.config.security.JwtService;
-import main.server.sql.dto.auth.LoginResponse;
+import main.server.config.security.SecurityConstants;
+import main.server.config.security.jwt.JwtService;
+import main.server.config.security.jwt.TokenCookie;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.entities.UserEntity;

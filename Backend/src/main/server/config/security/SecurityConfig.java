@@ -1,5 +1,7 @@
 package main.server.config.security;
 
+import main.server.config.security.jwt.JwtAuthenticationFilter;
+import main.server.config.security.jwt.JwtService;
 import main.server.sql.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
