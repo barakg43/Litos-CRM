@@ -33,11 +33,15 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/login")
-	public LoginResponse authenticate(@RequestBody LoginUserRecord loginUserDto) {
+	public ResponseEntity<UserEntity> authenticate(@RequestBody LoginUserRecord loginUserDto) {
 		UserEntity authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-		String jwtToken = jwtService.generateTokenFromUsername(authenticatedUser);
-
-		return new LoginResponse(jwtToken, jwtService.getExpirationTime());
+		String accessToken = new TokenCookie(
+				TokenCookie.eType.ACCESS, jwtService.generateTokenFromUsername(authenticatedUser))
+				.buildRawCookie();
+		
+		return ResponseEntity.ok()
+				.header(SecurityConstants.AUTH_ACCESS_KEY, accessToken)
+				.build();
 	}
 }
