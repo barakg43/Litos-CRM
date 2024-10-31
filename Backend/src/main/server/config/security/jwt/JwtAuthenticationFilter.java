@@ -2,8 +2,10 @@ package main.server.config.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import main.server.config.security.SecurityConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,16 +42,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			@NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain
 	) throws ServletException, IOException {
-		System.out.println(String.format("doFilterInternal: %s", request.getRequestURI()));
-		final String authHeader = request.getHeader("Authorization");
-
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+		final Cookie accessCookie = extractCookieFromRequest(request, SecurityConstants.AUTH_ACCESS_KEY);
+		if (accessCookie == null) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
 		try {
-			final String jwt = authHeader.substring(7);
+			final String jwt = accessCookie.getValue();
 			final String username = jwtService.getUsernameFromJwtToken(jwt);
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,5 +74,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			handlerExceptionResolver.resolveException(request, response, null, exception);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
 		}
+	}
+
+	private Cookie extractCookieFromRequest(@NonNull HttpServletRequest request, @NonNull String name) {
+		Cookie[] cookies = request.getCookies();
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals(name)) {
+				return cookie;
+			}
+		}
+		return null;
 	}
 }
