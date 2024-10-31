@@ -128,8 +128,8 @@ public class JwtService {
 	public String getUsernameFromJwtToken(String token) {
 		return Jwts.parser()
 				.verifyWith(getSignInKey())
-				.build().
-				parseSignedClaims(token)
+				.build()
+				.parseSignedClaims(token)
 				.getPayload()
 				.getSubject();
 	}
@@ -137,7 +137,6 @@ public class JwtService {
 
 	public boolean validateJwtToken(String authToken) {
 		try {
-			System.out.println("Validate");
 			Jwts.parser()
 					.verifyWith(getSignInKey())
 					.build()

@@ -17,7 +17,8 @@ public class TokenCookie {
 
 
 	public ResponseCookie buildCookie() {
-		return ResponseCookie.from(type.getName(), token)
+		return ResponseCookie
+				.from(type.getName(), token)
 				.httpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY)
 				.secure(SecurityConstants.AUTH_COOKIE_SECURE)
 				.path(SecurityConstants.AUTH_COOKIE_PATH)

@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static main.server.http.controlles.GlobalEndpointsController.printPWD;
+import static main.server.http.controllers.GlobalEndpointsController.printPWD;
 
 @SpringBootApplication
 //@EntityScan(basePackages = "main.server.sql.entities")

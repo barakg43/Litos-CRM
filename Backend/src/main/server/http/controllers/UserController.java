@@ -1,4 +1,4 @@
-package main.server.http.controlles;
+package main.server.http.controllers;
 
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.UserService;

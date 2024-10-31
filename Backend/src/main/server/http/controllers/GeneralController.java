@@ -1,4 +1,4 @@
-package main.server.http.controlles;
+package main.server.http.controllers;
 
 import main.server.http.HttpRequestExecutor;
 import main.server.sql.dto.reminder.RemindersAmount;

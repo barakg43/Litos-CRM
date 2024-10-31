@@ -1,4 +1,4 @@
-package main.server.http.controlles.reminders;
+package main.server.http.controllers.reminders;
 
 import main.server.http.HttpRequestExecutor;
 import main.server.sql.dto.ListSubset;

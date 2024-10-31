@@ -1,4 +1,4 @@
-package main.server.http.controlles;
+package main.server.http.controllers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

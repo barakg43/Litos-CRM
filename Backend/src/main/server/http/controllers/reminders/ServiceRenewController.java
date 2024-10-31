@@ -1,4 +1,4 @@
-package main.server.http.controlles.reminders;
+package main.server.http.controllers.reminders;
 
 import jakarta.persistence.EntityNotFoundException;
 import main.server.http.HttpRequestExecutor;

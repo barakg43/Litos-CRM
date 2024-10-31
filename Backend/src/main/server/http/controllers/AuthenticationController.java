@@ -1,13 +1,14 @@
-package main.server.http.controlles;
+package main.server.http.controllers;
 
-import main.server.config.security.SecurityConstants;
 import main.server.config.security.jwt.JwtService;
 import main.server.config.security.jwt.TokenCookie;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.AuthenticationService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/api/auth")
 @RestController
+@Controller
 public class AuthenticationController {
 	private final JwtService jwtService;
 
@@ -39,9 +41,9 @@ public class AuthenticationController {
 		String accessToken = new TokenCookie(
 				TokenCookie.eType.ACCESS, jwtService.generateTokenFromUsername(authenticatedUser))
 				.buildRawCookie();
-		
+
 		return ResponseEntity.ok()
-				.header(SecurityConstants.AUTH_ACCESS_KEY, accessToken)
+				.header(HttpHeaders.SET_COOKIE, accessToken)
 				.build();
 	}
 }

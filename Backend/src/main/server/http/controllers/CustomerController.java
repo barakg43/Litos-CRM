@@ -1,4 +1,4 @@
-package main.server.http.controlles;
+package main.server.http.controllers;
 
 import main.server.http.HttpRequestExecutor;
 import main.server.sql.dto.ListSubset;
@@ -7,12 +7,12 @@ import main.server.sql.dto.customer.CustomerSlimDetailsRecord;
 import main.server.sql.services.CustomerService;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import static main.server.ServerConstants.SERVER_CROSS_ORIGIN;
-
-@CrossOrigin(origins = SERVER_CROSS_ORIGIN)
+//@CrossOrigin(origins = SERVER_CROSS_ORIGIN)
+@Controller
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
