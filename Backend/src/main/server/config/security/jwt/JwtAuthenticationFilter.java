@@ -2,11 +2,10 @@ package main.server.config.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import main.server.config.security.SecurityConstants;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -42,14 +42,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			@NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain
 	) throws ServletException, IOException {
-		final Cookie accessCookie = extractCookieFromRequest(request, SecurityConstants.AUTH_ACCESS_KEY);
-		if (accessCookie == null) {
+		final Optional<ResponseCookie> accessCookie = TokenCookie.extractCookieFromRequest(request,
+				TokenCookie.eType.ACCESS);
+		if (accessCookie.isEmpty()) {
 			filterChain.doFilter(request, response);
 			return;
 		}
 
 		try {
-			final String jwt = accessCookie.getValue();
+			final String jwt = accessCookie.map(ResponseCookie::getValue).orElseThrow(() -> new RuntimeException("No " +
+					"JWT in " +
+					"cookie"));
 			final String username = jwtService.getUsernameFromJwtToken(jwt);
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,13 +79,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private Cookie extractCookieFromRequest(@NonNull HttpServletRequest request, @NonNull String name) {
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals(name)) {
-				return cookie;
-			}
-		}
-		return null;
-	}
+
 }
