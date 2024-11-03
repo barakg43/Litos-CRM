@@ -1,6 +1,9 @@
 package main.server.sql.entities;
 
 
+import lombok.Getter;
+
+@Getter
 public enum eCustomerStatus {
 	IN_SERVICE("IN_SERVICE"),
 	OUT_OF_SERVICE("OUT_OF_SERVICE"),
@@ -21,10 +24,6 @@ public enum eCustomerStatus {
 		for (eCustomerStatus v : values())
 			if (v.getStatus().equalsIgnoreCase(status)) return v;
 		throw new IllegalArgumentException();
-	}
-
-	public String getStatus() {
-		return status;
 	}
 
 	public String toString() {
