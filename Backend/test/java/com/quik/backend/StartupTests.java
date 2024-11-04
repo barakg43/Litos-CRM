@@ -1,9 +1,9 @@
 package java.com.quik.backend;
 
-import main.server.http.controlles.CustomerController;
-import main.server.http.controlles.GlobalEndpointsController;
-import main.server.http.controlles.reminders.ProductReminderController;
-import main.server.http.controlles.reminders.ServiceRenewController;
+import main.server.http.controllers.CustomerController;
+import main.server.http.controllers.GlobalEndpointsController;
+import main.server.http.controllers.reminders.ProductReminderController;
+import main.server.http.controllers.reminders.ServiceRenewController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
