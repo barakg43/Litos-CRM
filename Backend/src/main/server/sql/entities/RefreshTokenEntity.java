@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 @Setter
 public class RefreshTokenEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(columnDefinition = "decimal")
 	private long id;
 
