@@ -2,12 +2,12 @@ package main.server.config.security.jwt;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import main.server.config.security.SecurityConstants;
 import main.server.sql.entities.RefreshTokenEntity;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.RefreshTokenRepository;
 import main.server.sql.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +18,6 @@ import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
-	@Value("${bezkoder.app.jwtRefreshExpirationMs}")
-	private Long refreshTokenDurationMs;
 
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
@@ -33,7 +31,8 @@ public class RefreshTokenService {
 
 	public RefreshTokenEntity createRefreshToken(Integer userId) {
 		RefreshTokenEntity refreshToken = new RefreshTokenEntity();
-		Timestamp expiryDate = Timestamp.from(Instant.now().plusMillis(refreshTokenDurationMs));
+		int refreshTokenDurationSec = SecurityConstants.AUTH_COOKIE_REFRESH_MAX_AGE;
+		Timestamp expiryDate = Timestamp.from(Instant.now().plusSeconds(refreshTokenDurationSec));
 		Optional<UserEntity> optionalUser = userRepository.findById(userId);
 		if (optionalUser.isEmpty())
 			throw new EntityNotFoundException("User not found");
