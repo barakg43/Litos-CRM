@@ -1,6 +1,7 @@
 package main.server.sql.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +14,7 @@ import java.util.List;
 @Table(name = "tbUsers")
 @Entity
 public class UserEntity implements UserDetails {
+	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
@@ -44,10 +46,6 @@ public class UserEntity implements UserDetails {
 
 	public UserEntity() {
 
-	}
-
-	public Integer getId() {
-		return id;
 	}
 
 	@Override
