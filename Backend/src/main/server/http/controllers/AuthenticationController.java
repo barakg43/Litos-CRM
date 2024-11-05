@@ -92,12 +92,11 @@ public class AuthenticationController {
 					.map(refreshTokenService::verifyExpiration)
 					.map(RefreshTokenEntity::getUser)
 					.map(user -> {
-
-						String jwtCookie = new TokenCookie(TokenCookie.eType.REFRESH,
+						String jwtCookie = new TokenCookie(TokenCookie.eType.ACCESS,
 								jwtService.generateTokenFromUsername(user)).buildRawCookie();
-
 						return ResponseEntity.ok()
 								.header(HttpHeaders.SET_COOKIE, jwtCookie)
+								.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.get().toString())
 								.body("Token is refreshed successfully!");
 					})
 					.orElseThrow(() -> new TokenRefreshException(refreshTokenCookie.get().getValue(),
