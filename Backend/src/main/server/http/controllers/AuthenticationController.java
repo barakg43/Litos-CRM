@@ -84,11 +84,11 @@ public class AuthenticationController {
 
 	@PostMapping("/refreshtoken")
 	public ResponseEntity<?> refreshAccessToken(HttpServletRequest request) {
-		Optional<ResponseCookie> refreshTokenCookie = TokenCookie.extractCookieFromRequest(request,
+		Optional<ResponseCookie> optionalResponseCookie = TokenCookie.extractCookieFromRequest(request,
 				TokenCookie.eType.REFRESH);
 
-		if (refreshTokenCookie.isPresent()) {
-			return refreshTokenService.findByToken(refreshTokenCookie.get().getValue())
+		if (optionalResponseCookie.isPresent()) {
+			return refreshTokenService.findByToken(optionalResponseCookie.get().getValue())
 					.map(refreshTokenService::verifyExpiration)
 					.map(RefreshTokenEntity::getUser)
 					.map(user -> {
@@ -96,10 +96,10 @@ public class AuthenticationController {
 								jwtService.generateTokenFromUsername(user)).buildRawCookie();
 						return ResponseEntity.ok()
 								.header(HttpHeaders.SET_COOKIE, jwtCookie)
-								.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.get().toString())
+								.header(HttpHeaders.SET_COOKIE, optionalResponseCookie.get().toString())
 								.body("Token is refreshed successfully!");
 					})
-					.orElseThrow(() -> new TokenRefreshException(refreshTokenCookie.get().getValue(),
+					.orElseThrow(() -> new TokenRefreshException(optionalResponseCookie.get().getValue(),
 							"Refresh token is not in database!"));
 		}
 
