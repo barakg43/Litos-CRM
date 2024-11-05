@@ -7,6 +7,8 @@ import main.server.config.security.SecurityConstants;
 import org.springframework.http.ResponseCookie;
 import org.springframework.lang.NonNull;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 
 public class TokenCookie {
@@ -41,6 +43,19 @@ public class TokenCookie {
 	}
 
 	public static ResponseCookie buildCookie(String name, String token, int ageInSeconds) {
+		return ResponseCookie
+				.from(name, token)
+				.httpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY)
+				.secure(SecurityConstants.AUTH_COOKIE_SECURE)
+				.path(SecurityConstants.AUTH_COOKIE_PATH)
+				.maxAge(ageInSeconds)
+				.sameSite(SecurityConstants.AUTH_COOKIE_SAMESITE)
+//				.domain("example.com")
+				.build();
+	}
+
+	public static ResponseCookie buildCookie(String name, String token, Instant expiryDate) {
+		Duration ageInSeconds = Duration.between(Instant.now(), expiryDate);
 		return ResponseCookie
 				.from(name, token)
 				.httpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY)
