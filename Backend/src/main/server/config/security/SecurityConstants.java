@@ -7,7 +7,7 @@ public class SecurityConstants {
 	public static final int AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24;//in Seconds
 	public static final String[] CORS_ALLOWED_ORIGINS = {"*", "http://localhost:3000"};
 	public static final String AUTH_COOKIE_DOMAIN = "localhost";
-	public static final boolean AUTH_COOKIE_SECURE = true;
+	public static final boolean AUTH_COOKIE_SECURE = false;
 	public static final boolean AUTH_COOKIE_HTTP_ONLY = true;
 	public static final String AUTH_ACCESS_TOKEN_COOKIE_PATH = "/quik/api";
 	public static final String AUTH_REFRESH_TOKEN_COOKIE_PATH = "/quik/api/auth/refreshtoken";
