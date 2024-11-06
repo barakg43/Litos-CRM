@@ -9,7 +9,8 @@ public class SecurityConstants {
 	public static final String AUTH_COOKIE_DOMAIN = "localhost";
 	public static final boolean AUTH_COOKIE_SECURE = true;
 	public static final boolean AUTH_COOKIE_HTTP_ONLY = true;
-	public static final String AUTH_COOKIE_PATH = "/";
+	public static final String AUTH_ACCESS_TOKEN_COOKIE_PATH = "/quik/api";
+	public static final String AUTH_REFRESH_TOKEN_COOKIE_PATH = "/quik/api/auth/refreshtoken";
 	public static final String AUTH_COOKIE_SAMESITE = "Strict";
 //	AUTH_COOKIE_SECURE = getenv("AUTH_COOKIE_SECURE", "True") == "True"
 //	AUTH_COOKIE_HTTP_ONLY = True
