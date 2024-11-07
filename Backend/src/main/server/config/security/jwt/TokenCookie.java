@@ -42,25 +42,25 @@ public class TokenCookie {
 		return Optional.empty();
 	}
 
-	public static ResponseCookie buildCookie(String name, String token, int ageInSeconds) {
+	public static ResponseCookie buildCookie(String name, String path, String token, int ageInSeconds) {
 		return ResponseCookie
 				.from(name, token)
 				.httpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY)
 				.secure(SecurityConstants.AUTH_COOKIE_SECURE)
-				.path(SecurityConstants.AUTH_COOKIE_PATH)
+				.path(path)
 				.maxAge(ageInSeconds)
 				.sameSite(SecurityConstants.AUTH_COOKIE_SAMESITE)
 //				.domain("example.com")
 				.build();
 	}
 
-	public static ResponseCookie buildCookie(String name, String token, Instant expiryDate) {
+	public static ResponseCookie buildCookie(eType type, String token, Instant expiryDate) {
 		Duration ageInSeconds = Duration.between(Instant.now(), expiryDate);
 		return ResponseCookie
-				.from(name, token)
+				.from(type.getName(), token)
 				.httpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY)
 				.secure(SecurityConstants.AUTH_COOKIE_SECURE)
-				.path(SecurityConstants.AUTH_COOKIE_PATH)
+				.path(type.getPath())
 				.maxAge(ageInSeconds)
 				.sameSite(SecurityConstants.AUTH_COOKIE_SAMESITE)
 //				.domain("example.com")
@@ -68,7 +68,7 @@ public class TokenCookie {
 	}
 
 	public ResponseCookie buildCookie() {
-		return buildCookie(type.getName(), this.token, type.getAge());
+		return buildCookie(type.getName(), type.getPath(), this.token, type.getAge());
 	}
 
 	public String buildRawCookie() {
