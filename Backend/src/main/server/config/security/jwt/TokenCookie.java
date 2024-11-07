@@ -31,14 +31,22 @@ public class TokenCookie {
 
 	public static Optional<ResponseCookie> extractCookieFromRequest(@NonNull HttpServletRequest request,
 																	@NonNull eType type) {
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals(type.getName())) {
-
-
-				return Optional.of(TokenCookie.buildCookie(cookie.getName(), cookie.getValue(), cookie.getMaxAge()));
+		try {
+			Cookie[] cookies = request.getCookies();
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(type.getName())) {
+					System.out.printf("cookie name: %s, path: %s, maxAge: %s \n", cookie.getName(),
+							cookie.getPath(), cookie.getMaxAge());
+					return Optional.of(TokenCookie.buildCookie(
+							cookie.getName(),
+							cookie.getPath(),
+							cookie.getValue(),
+							cookie.getMaxAge()));
+				}
 			}
+		} catch (Exception ignored) {
 		}
+
 		return Optional.empty();
 	}
 
@@ -64,6 +72,13 @@ public class TokenCookie {
 				.maxAge(ageInSeconds)
 				.sameSite(SecurityConstants.AUTH_COOKIE_SAMESITE)
 //				.domain("example.com")
+				.build();
+	}
+
+	public static ResponseCookie createCleanCookie(eType type) {
+		return ResponseCookie.from(type.getName())
+				.value(null)
+				.path(type.getPath())
 				.build();
 	}
 
