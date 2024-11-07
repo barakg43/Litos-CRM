@@ -53,12 +53,12 @@ public class AuthenticationController {
 		String accessToken = new TokenCookie(
 				TokenCookie.eType.ACCESS, jwtService.generateTokenFromUsername(authenticatedUser))
 				.buildRawCookie();
-		RefreshTokenEntity refreshTokenEntity = refreshTokenService.createRefreshToken(authenticatedUser.getId());
+		TokenRecord refreshTokenEntity = refreshTokenService.createRefreshToken(authenticatedUser.getId());
 
-		Instant expiryDate = refreshTokenEntity.getExpiryDate().toInstant();
+		Instant expiryDate = refreshTokenEntity.expiryDate().toInstant();
 
 		String refreshTokenCookie = TokenCookie.buildCookie(TokenCookie.eType.REFRESH,
-				refreshTokenEntity.getToken(),
+				refreshTokenEntity.token(),
 				expiryDate).toString();
 		return ResponseEntity.ok()
 				.header(HttpHeaders.SET_COOKIE, accessToken)
