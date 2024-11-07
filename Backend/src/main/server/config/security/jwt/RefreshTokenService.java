@@ -86,9 +86,9 @@ public class RefreshTokenService {
 	}
 
 	@Transactional
-	public int deleteByUserId(Integer userId) {
-		if (!userRepository.existsById(userId))
+	public int deleteByUser(UserEntity user) {
+		if (!userRepository.existsById(user.getId()))
 			throw new EntityNotFoundException("User not found");
-		return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+		return refreshTokenRepository.deleteByUser(user);
 	}
 }
