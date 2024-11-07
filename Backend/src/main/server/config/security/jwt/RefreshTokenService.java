@@ -1,18 +1,28 @@
 package main.server.config.security.jwt;
 
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import main.server.config.security.SecurityConstants;
+import main.server.sql.dto.auth.TokenRecord;
 import main.server.sql.entities.RefreshTokenEntity;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.RefreshTokenRepository;
 import main.server.sql.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,11 +35,31 @@ public class RefreshTokenService {
 	@Autowired
 	private UserRepository userRepository;
 
-	public Optional<RefreshTokenEntity> findByToken(String token) {
-		return refreshTokenRepository.findByToken(token);
+	private MessageDigest tokenHarsher;
+
+	public Optional<RefreshTokenEntity> findByToken(String originalToken) {
+		String hashedToken = generateHashedString(originalToken);
+		return refreshTokenRepository.findByToken(hashedToken);
 	}
 
-	public RefreshTokenEntity createRefreshToken(Integer userId) {
+	@PostConstruct
+	private void initMessageDigest() {
+		try {
+			tokenHarsher = MessageDigest.getInstance("SHA3-256");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String generateHashedString(String original) {
+		byte[] hash = tokenHarsher.digest(original.getBytes(StandardCharsets.UTF_8));
+		return Base64.getEncoder().encodeToString(hash);
+
+	}
+
+	private String generateRandomToken() {
+		return UUID.randomUUID().toString();
+	}
 		RefreshTokenEntity refreshToken = new RefreshTokenEntity();
 		int refreshTokenDurationSec = SecurityConstants.AUTH_COOKIE_REFRESH_MAX_AGE;
 		Timestamp expiryDate = Timestamp.from(Instant.now().plusSeconds(refreshTokenDurationSec));
@@ -38,10 +68,11 @@ public class RefreshTokenService {
 			throw new EntityNotFoundException("User not found");
 		refreshToken.setUser(optionalUser.get());
 		refreshToken.setExpiryDate(expiryDate);
-		refreshToken.setToken(UUID.randomUUID().toString());
-
-		refreshToken = refreshTokenRepository.save(refreshToken);
-		return refreshToken;
+		String originalToken = generateRandomToken();
+		String hashedToken = generateHashedString(originalToken);
+		refreshToken.setToken(hashedToken);
+		refreshTokenRepository.save(refreshToken);
+		return new TokenRecord(originalToken, expiryDate);
 	}
 
 	public RefreshTokenEntity verifyExpiration(RefreshTokenEntity token) {
