@@ -35,8 +35,6 @@ public class TokenCookie {
 			Cookie[] cookies = request.getCookies();
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(type.getName())) {
-					System.out.printf("cookie name: %s, path: %s, maxAge: %s \n", cookie.getName(),
-							cookie.getPath(), cookie.getMaxAge());
 					return Optional.of(TokenCookie.buildCookie(
 							cookie.getName(),
 							cookie.getPath(),
