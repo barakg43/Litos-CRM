@@ -77,15 +77,21 @@ public class TokenCookie {
 
 	@Getter
 	public enum eType {
-		ACCESS(SecurityConstants.AUTH_ACCESS_KEY, SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE),
-		REFRESH(SecurityConstants.AUTH_REFRESH_KEY, SecurityConstants.AUTH_COOKIE_REFRESH_MAX_AGE);
+		ACCESS(SecurityConstants.AUTH_ACCESS_KEY,
+				SecurityConstants.AUTH_ACCESS_TOKEN_COOKIE_PATH,
+				SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE),
+		REFRESH(SecurityConstants.AUTH_REFRESH_KEY,
+				SecurityConstants.AUTH_REFRESH_TOKEN_COOKIE_PATH,
+				SecurityConstants.AUTH_COOKIE_REFRESH_MAX_AGE);
 
-		private final String name;
+		final private String name;
 		final private int age;
+		final private String path;
 
-		eType(String name, int age) {
+		eType(String name, String path, int age) {
 			this.name = name;
 			this.age = age;
+			this.path = path;
 		}
 	}
 }
