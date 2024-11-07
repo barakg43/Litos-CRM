@@ -96,11 +96,10 @@ public class AuthenticationController {
 								jwtService.generateTokenFromUsername(user)).buildRawCookie();
 						return ResponseEntity.ok()
 								.header(HttpHeaders.SET_COOKIE, jwtCookie)
-								.header(HttpHeaders.SET_COOKIE, optionalResponseCookie.get().toString())
 								.body("Token is refreshed successfully!");
 					})
 					.orElseThrow(() -> new TokenRefreshException(optionalResponseCookie.get().getValue(),
-							"Refresh token is not in database!"));
+							"Refresh token is not valid! Please sign in again."));
 		}
 
 		return ResponseEntity.badRequest().body("Refresh Token is empty!");
