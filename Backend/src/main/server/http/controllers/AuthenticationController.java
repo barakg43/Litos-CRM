@@ -57,9 +57,9 @@ public class AuthenticationController {
 
 		Instant expiryDate = refreshTokenEntity.getExpiryDate().toInstant();
 
-		String refreshTokenCookie = TokenCookie.buildCookie(SecurityConstants.AUTH_REFRESH_KEY,
-				refreshTokenEntity.getToken()
-				, expiryDate).toString();
+		String refreshTokenCookie = TokenCookie.buildCookie(TokenCookie.eType.REFRESH,
+				refreshTokenEntity.getToken(),
+				expiryDate).toString();
 		return ResponseEntity.ok()
 				.header(HttpHeaders.SET_COOKIE, accessToken)
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
