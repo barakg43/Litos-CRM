@@ -1,7 +1,6 @@
 package main.server.http.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
-import main.server.config.security.SecurityConstants;
 import main.server.config.security.jwt.JwtService;
 import main.server.config.security.jwt.RefreshTokenService;
 import main.server.config.security.jwt.TokenCookie;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequestMapping("/api/auth")
@@ -65,28 +66,27 @@ public class AuthenticationController {
 				.build();
 	}
 
-//	@PostMapping("/signout")
-//	public ResponseEntity<?> logoutUser() {
-//		Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//		if (!Objects.equals(principle.toString(), "anonymousUser")) {
-//			Long userId = ((UserDetailsImpl) principle).getId();
-//			refreshTokenService.deleteByUserId(userId);
-//		}
-//
-//		ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
-//		ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
-//
-//		return ResponseEntity.ok()
-//				.header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-//				.header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-//				.body("You've been signed out!");
-//	}
+	@PostMapping("/signout")
+	public ResponseEntity<?> logoutUser() {
+		Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if (!Objects.equals(principle.toString(), "anonymousUser")) {
+			Integer userId = ((UserEntity) principle).getId();
+			refreshTokenService.deleteByUserId(userId);
+		}
+		ResponseCookie jwtCookie = TokenCookie.createCleanCookie(TokenCookie.eType.ACCESS);
+		ResponseCookie jwtRefreshCookie = TokenCookie.createCleanCookie(TokenCookie.eType.REFRESH);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+				.header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+				.body("You've been signed out!");
+	}
 
 	@PostMapping("/refreshtoken")
 	public ResponseEntity<?> refreshAccessToken(HttpServletRequest request) {
 		Optional<ResponseCookie> optionalResponseCookie = TokenCookie.extractCookieFromRequest(request,
 				TokenCookie.eType.REFRESH);
-
 		if (optionalResponseCookie.isPresent()) {
 			return refreshTokenService.findByToken(optionalResponseCookie.get().getValue())
 					.map(refreshTokenService::verifyExpiration)
