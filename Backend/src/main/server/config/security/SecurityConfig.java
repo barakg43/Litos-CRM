@@ -2,6 +2,7 @@ package main.server.config.security;
 
 import main.server.config.security.jwt.JwtAuthenticationFilter;
 import main.server.config.security.jwt.JwtService;
+import main.server.config.security.jwt.RefreshTokenService;
 import main.server.sql.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,12 +33,15 @@ public class SecurityConfig {
 	private final UserRepository userRepository;
 	private final HandlerExceptionResolver handlerExceptionResolver;
 	private final JwtService jwtService;
+	private final RefreshTokenService refreshTokenService;
+
 
 	public SecurityConfig(UserRepository userRepository, HandlerExceptionResolver handlerExceptionResolver,
-						  JwtService jwtService) {
+						  JwtService jwtService, RefreshTokenService refreshTokenService) {
 		this.userRepository = userRepository;
 		this.handlerExceptionResolver = handlerExceptionResolver;
 		this.jwtService = jwtService;
+		this.refreshTokenService = refreshTokenService;
 	}
 
 	public JwtAuthenticationFilter authenticationJwtTokenFilter() {
@@ -77,6 +81,15 @@ public class SecurityConfig {
 						.requestMatchers("/api-docs/**").permitAll()
 						.requestMatchers("/swagger-ui/**").permitAll()
 						.anyRequest().authenticated()
+
+				)
+				.logout(logout -> logout
+								.logoutUrl("/api/auth/signout")
+								.addLogoutHandler(refreshTokenService.getSuccessLogoutHandler())
+//						.deleteCookies(
+//								TokenCookie.eType.ACCESS.getName(),
+//								TokenCookie.eType.REFRESH.getName())
+								.logoutSuccessUrl("/")
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
