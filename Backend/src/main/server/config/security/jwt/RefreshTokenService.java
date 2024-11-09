@@ -60,6 +60,53 @@ public class RefreshTokenService {
 	private String generateRandomToken() {
 		return UUID.randomUUID().toString();
 	}
+
+	public LogoutHandler getSuccessLogoutHandler() {
+		System.out.println("config security jwt RefreshTokenService getLogoutHandler()");
+		return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
+			Optional<ResponseCookie> optionalRefreshCookie = TokenCookie.extractCookieFromRequest(request,
+					TokenCookie.eType.REFRESH);
+			boolean isLogoutAllDevices = request.getParameter("all") != null
+					&& request.getParameter("all").equals("true");
+			System.out.println("token :" + optionalRefreshCookie.map(ResponseCookie::getValue));
+			if (isLogoutAllDevices) {
+				handleLogoutAllDevice(optionalRefreshCookie);
+			} else {
+				handleLogoutOneDevice(optionalRefreshCookie);
+			}
+			response.addCookie(TokenCookie.createCleanCookie(TokenCookie.eType.REFRESH));
+			response.addCookie(TokenCookie.createCleanCookie(TokenCookie.eType.ACCESS));
+		};
+	}
+
+	private void handleLogoutAllDevice(Optional<ResponseCookie> optionalRefreshCookie) {
+		try {
+			optionalRefreshCookie.map(ResponseCookie::getValue)
+					.map(this::findByToken)
+					.flatMap(optionalToken ->
+					{
+						System.out.println("Deleting refresh token for user: " + optionalToken.get().getUser().getId());
+						return optionalToken.map(RefreshTokenEntity::getUser);
+					})
+					.map(this::deleteByUser);
+//					.orElseThrow(() -> new EntityNotFoundException("Refresh token not found or user not found"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void handleLogoutOneDevice(Optional<ResponseCookie> optionalRefreshCookie) {
+		try {
+			optionalRefreshCookie.map(ResponseCookie::getValue)
+					.flatMap(this::findByToken)
+					.ifPresent(this::deleteByToken);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	public TokenRecord createRefreshToken(Integer userId) {
 		RefreshTokenEntity refreshToken = new RefreshTokenEntity();
 		int refreshTokenDurationSec = SecurityConstants.AUTH_COOKIE_REFRESH_MAX_AGE;
 		Timestamp expiryDate = Timestamp.from(Instant.now().plusSeconds(refreshTokenDurationSec));
