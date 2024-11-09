@@ -73,11 +73,14 @@ public class TokenCookie {
 				.build();
 	}
 
-	public static ResponseCookie createCleanCookie(eType type) {
-		return ResponseCookie.from(type.getName())
-				.value(null)
-				.path(type.getPath())
-				.build();
+	public static Cookie createCleanCookie(eType type) {
+		Cookie cookie = new Cookie(type.getName(), "");
+		cookie.setPath(type.getPath());
+		cookie.setMaxAge(0);
+		cookie.setHttpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY);
+		cookie.setSecure(SecurityConstants.AUTH_COOKIE_SECURE);
+		cookie.setAttribute("SameSite", SecurityConstants.AUTH_COOKIE_SAMESITE);
+		return cookie;
 	}
 
 	public ResponseCookie buildCookie() {
