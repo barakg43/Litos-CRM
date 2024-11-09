@@ -91,4 +91,12 @@ public class RefreshTokenService {
 			throw new EntityNotFoundException("User not found");
 		return refreshTokenRepository.deleteByUser(user);
 	}
+
+
+	public void deleteByToken(RefreshTokenEntity token) {
+		System.out.println("Deleting refresh token: " + token.getToken());
+		if (!refreshTokenRepository.existsById(token.getId()))
+			throw new EntityNotFoundException("Refresh token not found");
+		refreshTokenRepository.delete(token);
+	}
 }
