@@ -1,5 +1,6 @@
 package quik.backend;
 
+import main.server.http.controllers.AuthenticationController;
 import main.server.http.controllers.CustomerController;
 import main.server.http.controllers.GlobalEndpointsController;
 import main.server.http.controllers.reminders.ProductReminderController;
@@ -25,7 +26,7 @@ class StartupTests {
 	@Autowired
 	private ServiceRenewController serviceRenewController;
 	@Autowired
-	private AuthenticationController AuthenticationController;
+	private AuthenticationController authenticationController;
 
 	@Test
 	void globalContextLoad() throws Exception {
@@ -49,6 +50,6 @@ class StartupTests {
 
 	@Test
 	void authenticationContextLoad() {
-		assertThat(AuthenticationController).isNotNull();
+		assertThat(authenticationController).isNotNull();
 	}
 }
