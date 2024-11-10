@@ -5,6 +5,7 @@ import main.server.config.security.jwt.JwtService;
 import main.server.config.security.jwt.RefreshTokenService;
 import main.server.config.security.jwt.TokenCookie;
 import main.server.config.security.jwt.TokenRefreshException;
+import main.server.sql.dto.ErrorDto;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.dto.auth.TokenRecord;
@@ -13,6 +14,7 @@ import main.server.sql.entities.UserEntity;
 import main.server.sql.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -39,7 +41,18 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<UserEntity> register(@RequestBody RegisterUserDto registerUserDto) {
+	public ResponseEntity<?> register(@RequestBody RegisterUserDto registerUserDto) {
+		if (authenticationService.isUsernameExists(registerUserDto.username())) {
+			return ResponseEntity
+					.status(HttpStatus.CONFLICT)
+					.body(new ErrorDto("Username already exists!, please choose another one"));
+		}
+
+		if (authenticationService.isEmailExists(registerUserDto.email())) {
+			return ResponseEntity
+					.status(HttpStatus.CONFLICT)
+					.body(new ErrorDto("Email already exists!, please choose another one"));
+		}
 		UserEntity registeredUser = authenticationService.signup(registerUserDto);
 
 		return ResponseEntity.ok(registeredUser);
