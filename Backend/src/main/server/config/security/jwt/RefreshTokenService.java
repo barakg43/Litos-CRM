@@ -5,18 +5,21 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import main.server.config.security.SecurityConstants;
 import main.server.sql.dto.auth.TokenRecord;
 import main.server.sql.entities.RefreshTokenEntity;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.RefreshTokenRepository;
 import main.server.sql.repositories.UserRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -61,7 +64,7 @@ public class RefreshTokenService {
 		return UUID.randomUUID().toString();
 	}
 
-	public LogoutHandler getSuccessLogoutHandler() {
+	public LogoutHandler getLogoutHandler() {
 		System.out.println("config security jwt RefreshTokenService getLogoutHandler()");
 		return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
 			Optional<ResponseCookie> optionalRefreshCookie = TokenCookie.extractCookieFromRequest(request,
@@ -88,10 +91,17 @@ public class RefreshTokenService {
 						System.out.println("Deleting refresh token for user: " + optionalToken.get().getUser().getId());
 						return optionalToken.map(RefreshTokenEntity::getUser);
 					})
-					.map(this::deleteByUser);
-//					.orElseThrow(() -> new EntityNotFoundException("Refresh token not found or user not found"));
+					.map(this::deleteByUser)
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token not found " +
+							"or" +
+							" user not found"));
+		} catch (ResponseStatusException e) {
+			throw e;
+		} catch (NullPointerException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token not found or" +
+					" user not found");
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 	}
 
@@ -100,8 +110,10 @@ public class RefreshTokenService {
 			optionalRefreshCookie.map(ResponseCookie::getValue)
 					.flatMap(this::findByToken)
 					.ifPresent(this::deleteByToken);
+		} catch (NullPointerException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token not found!");
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 	}
 
