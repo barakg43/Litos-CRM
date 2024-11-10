@@ -34,6 +34,7 @@ public class AuthTests {
 	AuthenticationController authenticationController;
 	@Autowired
 	UserRepository userRepository;
+	
 	MockMvc mockMvc;
 	ObjectMapper objectMapper;
 	UserEntity userEntityToTest;
@@ -54,7 +55,7 @@ public class AuthTests {
 
 	@BeforeEach
 	void createUser() {
-		userEntityToTest = new UserEntity("test", "test@t.com", passwordEncoder.encode(USER_PASSWORD), "test signup");
+		userEntityToTest = new UserEntity("test", "test signup", "test@t.com", passwordEncoder.encode(USER_PASSWORD));
 		userRepository.save(userEntityToTest);
 	}
 
