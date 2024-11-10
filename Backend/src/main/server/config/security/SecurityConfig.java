@@ -91,12 +91,9 @@ public class SecurityConfig {
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.logout(logout -> logout
-								.logoutUrl("/api/auth/signout")
-								.addLogoutHandler(refreshTokenService.getSuccessLogoutHandler())
-//						.deleteCookies(
-//								TokenCookie.eType.ACCESS.getName(),
-//								TokenCookie.eType.REFRESH.getName())
-								.logoutSuccessUrl("/")
+						.logoutUrl("/api/auth/signout")
+						.addLogoutHandler(refreshTokenService.getLogoutHandler())
+						.logoutSuccessUrl("/")
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
