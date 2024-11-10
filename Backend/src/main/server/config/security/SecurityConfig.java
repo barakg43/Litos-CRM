@@ -1,5 +1,6 @@
 package main.server.config.security;
 
+import main.server.config.security.jwt.AuthEntryPointJwt;
 import main.server.config.security.jwt.JwtAuthenticationFilter;
 import main.server.config.security.jwt.JwtService;
 import main.server.config.security.jwt.RefreshTokenService;
@@ -34,14 +35,19 @@ public class SecurityConfig {
 	private final HandlerExceptionResolver handlerExceptionResolver;
 	private final JwtService jwtService;
 	private final RefreshTokenService refreshTokenService;
+	private final AuthEntryPointJwt unauthorizedHandler;
 
 
-	public SecurityConfig(UserRepository userRepository, HandlerExceptionResolver handlerExceptionResolver,
-						  JwtService jwtService, RefreshTokenService refreshTokenService) {
+	public SecurityConfig(UserRepository userRepository,
+						  HandlerExceptionResolver handlerExceptionResolver,
+						  JwtService jwtService,
+						  RefreshTokenService refreshTokenService,
+						  AuthEntryPointJwt unauthorizedHandler) {
 		this.userRepository = userRepository;
 		this.handlerExceptionResolver = handlerExceptionResolver;
 		this.jwtService = jwtService;
 		this.refreshTokenService = refreshTokenService;
+		this.unauthorizedHandler = unauthorizedHandler;
 	}
 
 	public JwtAuthenticationFilter authenticationJwtTokenFilter() {
@@ -83,6 +89,7 @@ public class SecurityConfig {
 						.anyRequest().authenticated()
 
 				)
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.logout(logout -> logout
 								.logoutUrl("/api/auth/signout")
 								.addLogoutHandler(refreshTokenService.getSuccessLogoutHandler())
