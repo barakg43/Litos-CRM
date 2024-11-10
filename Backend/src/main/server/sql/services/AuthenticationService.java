@@ -47,4 +47,12 @@ public class AuthenticationService {
 		return userRepository.findByUsername(input.username())
 				.orElseThrow();
 	}
+
+	public boolean isUsernameExists(String username) {
+		return userRepository.existsByUsername(username);
+	}
+
+	public boolean isEmailExists(String email) {
+		return userRepository.existsByEmail(email);
+	}
 }
