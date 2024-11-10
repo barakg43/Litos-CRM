@@ -122,7 +122,7 @@ public class RefreshTokenService {
 		return new TokenRecord(originalToken, expiryDate);
 	}
 
-	public RefreshTokenEntity verifyExpiration(RefreshTokenEntity token) {
+	public RefreshTokenEntity verifyExpiration(@NotNull RefreshTokenEntity token) {
 		if (token.getExpiryDate().compareTo(Timestamp.from(Instant.now())) < 0) {
 			refreshTokenRepository.delete(token);
 			throw new TokenRefreshException(token.getToken(), "Refresh token was expired. Please make a new signin " +
@@ -133,14 +133,13 @@ public class RefreshTokenService {
 	}
 
 	@Transactional
-	public int deleteByUser(UserEntity user) {
+	public int deleteByUser(@NotNull UserEntity user) {
 		if (!userRepository.existsById(user.getId()))
 			throw new EntityNotFoundException("User not found");
 		return refreshTokenRepository.deleteByUser(user);
 	}
 
-
-	public void deleteByToken(RefreshTokenEntity token) {
+	public void deleteByToken(@NotNull RefreshTokenEntity token) {
 		System.out.println("Deleting refresh token: " + token.getToken());
 		if (!refreshTokenRepository.existsById(token.getId()))
 			throw new EntityNotFoundException("Refresh token not found");
