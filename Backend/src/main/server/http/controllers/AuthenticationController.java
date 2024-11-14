@@ -48,7 +48,7 @@ public class AuthenticationController {
 					.body(new ErrorDTO("/auth/signup",
 							"Username already exists",
 							HttpStatus.CONFLICT, String.format(
-							"Username %s already in use. please use another or login with existing account",
+							"Username '%s' already in use. please use another or login with existing account",
 							registerUserDto.username()
 					)));
 		}
@@ -61,7 +61,7 @@ public class AuthenticationController {
 							"Email already exists",
 							HttpStatus.CONFLICT,
 							String.format(
-									"Email %s already in use.please use another or login with existing account",
+									"Email '%s' already in use.please use another or login with existing account",
 									registerUserDto.email()
 							)));
 		}
