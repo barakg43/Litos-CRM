@@ -45,13 +45,25 @@ public class AuthenticationController {
 		if (authenticationService.isUsernameExists(registerUserDto.username())) {
 			return ResponseEntity
 					.status(HttpStatus.CONFLICT)
-					.body(new ErrorDto("Username already exists!, please choose another one"));
+					.body(new ErrorDTO("/auth/signup",
+							"Username already exists",
+							HttpStatus.CONFLICT, String.format(
+							"Username %s already in use. please use another or login with existing account",
+							registerUserDto.username()
+					)));
 		}
 
 		if (authenticationService.isEmailExists(registerUserDto.email())) {
 			return ResponseEntity
 					.status(HttpStatus.CONFLICT)
-					.body(new ErrorDto("Email already exists!, please choose another one"));
+					.body(new ErrorDTO(
+							"/auth/signup",
+							"Email already exists",
+							HttpStatus.CONFLICT,
+							String.format(
+									"Email %s already in use.please use another or login with existing account",
+									registerUserDto.email()
+							)));
 		}
 		UserEntity registeredUser = authenticationService.signup(registerUserDto);
 
