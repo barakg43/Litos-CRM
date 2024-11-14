@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,25 +27,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ComponentScan(basePackages = "main.server")
 @SpringBootTest(classes = AuthTests.class)
+
 public class AuthTests {
 
 	private final String USER_PASSWORD = "test@1123";
+	private final HandlerExceptionResolver handlerExceptionResolver;
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	@Autowired
 	AuthenticationController authenticationController;
 	@Autowired
 	UserRepository userRepository;
-
 	MockMvc mockMvc;
 	ObjectMapper objectMapper;
 	UserEntity userEntityToTest;
 
+	public AuthTests(@Autowired HandlerExceptionResolver handlerExceptionResolver) {
+		this.handlerExceptionResolver = handlerExceptionResolver;
+	}
+
+
 	@BeforeEach
 	public void setup() {
 		objectMapper = new ObjectMapper();
-		mockMvc = MockMvcBuilders
-				.standaloneSetup(authenticationController)
+		this.mockMvc = MockMvcBuilders.standaloneSetup(authenticationController)
+				.setHandlerExceptionResolvers(handlerExceptionResolver)
+				.setMessageConverters(new MappingJackson2HttpMessageConverter())
 				.build();
 	}
 
