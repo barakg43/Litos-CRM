@@ -114,10 +114,12 @@ public class AuthTests {
 	}
 
 	@Test
-	void signin_shouldReturnUnauthorized() throws Exception {
+	void signin_badPassword_shouldReturnBadRequest() throws Exception {
 		mockMvc.perform(post("/api/auth/login")
 						.content(objectMapper.writeValueAsString(new LoginUserRecord("wrong", "wrong")))
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isForbidden()); // TODO: change to 401
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.title").value(Matchers.containsString("Bad Credentials")));
 	}
+
 }
