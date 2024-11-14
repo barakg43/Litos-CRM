@@ -5,7 +5,7 @@ import main.server.config.security.jwt.JwtService;
 import main.server.config.security.jwt.RefreshTokenService;
 import main.server.config.security.jwt.TokenCookie;
 import main.server.config.security.jwt.TokenRefreshException;
-import main.server.sql.dto.ErrorDto;
+import main.server.sql.dto.ErrorDTO;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.dto.auth.TokenRecord;

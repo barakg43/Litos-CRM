@@ -1,7 +1,6 @@
 package main.server.config.security.jwt;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseCookie;
@@ -16,11 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
 
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
@@ -39,42 +38,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			@NonNull HttpServletRequest request,
 			@NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain
-	) throws ServletException, IOException {
+	) {
 		final Optional<ResponseCookie> accessCookie = TokenCookie.extractCookieFromRequest(request,
 				TokenCookie.eType.ACCESS);
-		if (accessCookie.isEmpty()) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-
-//		try {
-		final String jwt = accessCookie.map(ResponseCookie::getValue)
-				.orElseThrow(() ->
-						new RuntimeException("No JWT in cookie"));
-		final String username = jwtService.getUsernameFromJwtToken(jwt);
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		if (username != null && authentication == null) {
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-			if (jwtService.validateJwtToken(jwt)) {
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-						userDetails,
-						null,
-						userDetails.getAuthorities()
-				);
-
-				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(authToken);
+		try {
+			if (accessCookie.isEmpty()) {
+				filterChain.doFilter(request, response);
+				return;
 			}
-		}
+			final String jwt = accessCookie.map(ResponseCookie::getValue)
+					.orElseThrow(() ->
+							new RuntimeException("No JWT in cookie"));
+			final String username = jwtService.getUsernameFromJwtToken(jwt);
 
-		filterChain.doFilter(request, response);
-//		} catch (Exception exception) {
-//			handlerExceptionResolver.resolveException(request, response, null, exception);
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+			if (username != null && authentication == null) {
+				UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+				if (jwtService.validateJwtToken(jwt)) {
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+							userDetails,
+							null,
+							userDetails.getAuthorities()
+					);
+
+					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					SecurityContextHolder.getContext().setAuthentication(authToken);
+				}
+			}
+
+			filterChain.doFilter(request, response);
+		} catch (Exception exception) {
+			handlerExceptionResolver.resolveException(request, response, null, exception);
 //			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-//		}
+		}
 	}
 
 
