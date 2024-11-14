@@ -87,7 +87,6 @@ public class SecurityConfig {
 						.requestMatchers("/api-docs/**").permitAll()
 						.requestMatchers("/swagger-ui/**").permitAll()
 						.anyRequest().authenticated()
-
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
 				.logout(logout -> logout

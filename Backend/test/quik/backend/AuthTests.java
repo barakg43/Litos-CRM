@@ -34,7 +34,7 @@ public class AuthTests {
 	AuthenticationController authenticationController;
 	@Autowired
 	UserRepository userRepository;
-	
+
 	MockMvc mockMvc;
 	ObjectMapper objectMapper;
 	UserEntity userEntityToTest;
