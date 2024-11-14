@@ -102,13 +102,13 @@ public class AuthTests {
 						.content(objectMapper.writeValueAsString(registerUserWithUser))
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isConflict())
-				.andExpect(jsonPath("$.error").value(Matchers.containsString("Username already exists!")));
+				.andExpect(jsonPath("$.title").value(Matchers.containsString("Username already exists")));
 		System.out.println("passed username already exist test");
 		mockMvc.perform(post("/api/auth/signup")
 						.content(objectMapper.writeValueAsString(registerUserWithEmail))
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isConflict())
-				.andExpect(jsonPath("$.error").value(Matchers.containsString("Email already exists!")));
+				.andExpect(jsonPath("$.title").value(Matchers.containsString("Email already exists")));
 		System.out.println("passed email already exist test");
 
 	}
