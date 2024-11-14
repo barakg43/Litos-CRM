@@ -7,6 +7,7 @@ import main.server.exceptions.ResourceNotFoundException;
 import main.server.sql.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -60,5 +61,12 @@ public class GlobalExceptionHandler {
 				HttpStatus.INTERNAL_SERVER_ERROR,
 				message)
 				, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException exception,
+														   HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Bad Credentials", HttpStatus.UNAUTHORIZED,
+				exception.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 }
