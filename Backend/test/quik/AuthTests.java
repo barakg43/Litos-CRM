@@ -84,7 +84,7 @@ public class AuthTests {
 						.content(objectMapper.writeValueAsString(registerUserDto))
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
-		userRepository.delete(userToDeleteAfterTest);
+		userRepository.findByUsername(registerUserDto.username()).ifPresent(userRepository::delete);
 	}
 
 	@Test
