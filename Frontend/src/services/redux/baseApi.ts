@@ -2,8 +2,8 @@
 import { Mutex } from "async-mutex";
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { httpClient } from "../axios";
-import { createApi } from "../reactQueryToolkit";
-import { BaseQueryFn } from "../reactQueryToolkitType";
+import { createApi } from "../react-query-toolkit/reactQueryToolkit";
+import { BaseQueryFn } from "../react-query-toolkit/reactQueryToolkitType";
 
 // create a new mutex
 const mutex = new Mutex();

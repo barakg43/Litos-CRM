@@ -6,6 +6,7 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { capitalize } from "../utils";
 import {
   Api,
   BaseQueryArg,
@@ -25,7 +26,6 @@ import {
   UseQuery,
 } from "./reactQueryToolkitType";
 import { safeAssign } from "./tsHelpers";
-import { capitalize } from "./utils";
 
 export const createApi = /* @__PURE__ */ createApiCallback();
 
