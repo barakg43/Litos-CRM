@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DefaultError, UseMutateFunction } from "@tanstack/react-query";
-import { HasRequiredProps, OmitFromUnion, UnwrapPromise } from "./tsHelpers.d";
+import { HasRequiredProps, OmitFromUnion, UnwrapPromise } from "./tsHelpers";
 
 export enum DefinitionType {
   query = "query",
