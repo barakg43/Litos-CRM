@@ -1,4 +1,4 @@
-package quik.backend;
+package quik;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import main.server.http.controllers.AuthenticationController;
@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ComponentScan(basePackages = "main.server")
 @SpringBootTest(classes = AuthTests.class)
-
 public class AuthTests {
 
 	private final String USER_PASSWORD = "test@1123";

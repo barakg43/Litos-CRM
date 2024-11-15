@@ -1,4 +1,4 @@
-package quik.backend;
+package quik;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;

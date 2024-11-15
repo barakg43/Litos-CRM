@@ -1,4 +1,4 @@
-package quik.backend;
+package quik;
 
 import main.server.http.controllers.AuthenticationController;
 import main.server.http.controllers.CustomerController;
