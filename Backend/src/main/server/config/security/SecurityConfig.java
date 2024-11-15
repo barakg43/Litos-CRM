@@ -35,7 +35,7 @@ public class SecurityConfig {
 	private final JwtService jwtService;
 	private final RefreshTokenService refreshTokenService;
 	private final AuthEntryPointJwt unauthorizedHandler;
-	
+
 	public SecurityConfig(UserRepository userRepository,
 						  HandlerExceptionResolver handlerExceptionResolver,
 						  JwtService jwtService,
@@ -92,7 +92,8 @@ public class SecurityConfig {
 						.addLogoutHandler(refreshTokenService.getLogoutHandler())
 						.logoutSuccessUrl("/")
 				)
-				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.formLogin(AbstractHttpConfigurer::disable);
 //				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 //				.httpBasic(Customizer.withDefaults());
 		http.authenticationProvider(authenticationProvider());
