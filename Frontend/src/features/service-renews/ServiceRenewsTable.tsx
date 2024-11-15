@@ -42,7 +42,7 @@ function ServiceRenewsTable() {
           data={serviceContractRenews}
           isLoading={isLoading}
           resourceName={t("title")}
-          render={(serviceReminder) => (
+          render={(serviceReminder: ServiceRenewRecord) => (
             <ServiceRenewRow
               customerID={serviceReminder.customerID}
               customerShortName={serviceReminder.customerShortName}
