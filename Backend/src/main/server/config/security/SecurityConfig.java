@@ -35,8 +35,7 @@ public class SecurityConfig {
 	private final JwtService jwtService;
 	private final RefreshTokenService refreshTokenService;
 	private final AuthEntryPointJwt unauthorizedHandler;
-
-
+	
 	public SecurityConfig(UserRepository userRepository,
 						  HandlerExceptionResolver handlerExceptionResolver,
 						  JwtService jwtService,
@@ -60,9 +59,7 @@ public class SecurityConfig {
 		configuration.setAllowedOrigins(List.of(SecurityConstants.CORS_ALLOWED_ORIGINS));
 		configuration.setAllowedMethods(List.of("POST"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
 		source.registerCorsConfiguration("/**", configuration);
 
 		return source;
@@ -103,7 +100,6 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-
 	@Bean
 	BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -113,11 +109,6 @@ public class SecurityConfig {
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
 		return authConfig.getAuthenticationManager();
 	}
-
-//	@Bean
-//	public AuthenticationManager authenticationManager() {
-//		return new ProviderManager(authenticationProvider());
-//	}
 
 	@Bean
 	AuthenticationProvider authenticationProvider() {
