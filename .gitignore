@@ -141,7 +141,7 @@ buildNumber.properties
 
 # logs
 /stacktrace.log
-/test/reports
+/Backend/test/reports
 /logs
 
 # project release file
