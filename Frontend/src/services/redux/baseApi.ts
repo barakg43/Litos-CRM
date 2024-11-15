@@ -25,7 +25,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
       try {
         const refreshResult = await axiosBaseQuery(
           {
-            url: "/auth/jwt/refresh",
+            url: "/auth/refreshtoken",
             method: "POST",
           },
           undefined
