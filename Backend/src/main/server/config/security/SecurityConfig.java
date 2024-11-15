@@ -28,7 +28,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.util.List;
 
 @Configuration
-//@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 	private final UserRepository userRepository;
@@ -86,6 +85,8 @@ public class SecurityConfig {
 						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers("/api-docs/**").permitAll()
 						.requestMatchers("/swagger-ui/**").permitAll()
+						.requestMatchers("/", "/index.html").permitAll()
+						.requestMatchers("/assets/**", "/locales/**").permitAll()
 						.anyRequest().authenticated()
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
