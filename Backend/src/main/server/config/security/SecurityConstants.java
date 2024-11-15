@@ -5,7 +5,7 @@ public class SecurityConstants {
 	public static final String AUTH_REFRESH_KEY = "refresh-token";
 	public static final int AUTH_COOKIE_ACCESS_MAX_AGE = 60 * 5; //in Seconds
 	public static final int AUTH_COOKIE_REFRESH_MAX_AGE = 60 * 60 * 24;//in Seconds
-	public static final String[] CORS_ALLOWED_ORIGINS = {"*", "http://localhost:3000"};
+	public static final String[] CORS_ALLOWED_ORIGINS = {"*", "http://localhost:3000,http://localhost:5173"};
 	public static final String AUTH_COOKIE_DOMAIN = "localhost";
 	public static final boolean AUTH_COOKIE_SECURE = false;
 	public static final boolean AUTH_COOKIE_HTTP_ONLY = true;
