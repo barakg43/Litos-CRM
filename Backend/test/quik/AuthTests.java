@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -125,6 +126,15 @@ public class AuthTests {
 	void signin_badPassword_shouldReturnBadRequest() throws Exception {
 		mockMvc.perform(post("/api/auth/login")
 						.content(objectMapper.writeValueAsString(new LoginUserRecord("wrong", "wrong")))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.title").value(Matchers.containsString("Bad Credentials")));
+	}
+
+	@Test
+	void signin_unuauthorizedAcessProtectedResource_shouldUnauthorized() throws Exception {
+		mockMvc.perform(get("/api/customers/")
+						.content(objectMapper.writeValueAsString(new LoginUserRecord("wrong", USER_PASSWORD)))
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.title").value(Matchers.containsString("Bad Credentials")));
