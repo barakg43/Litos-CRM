@@ -191,9 +191,8 @@ function buildQueryHook<
         };
         break;
       case "error":
-        console.error("error useQueryHook:", error.message);
         return {
-          data: undefined,
+          data: {},
           isLoading: false,
           isError: true,
           error: error.message,
@@ -202,7 +201,7 @@ function buildQueryHook<
         };
       default:
         return {
-          data: undefined,
+          data: {},
           isLoading: true,
           isError: false,
           error: null,
@@ -252,7 +251,7 @@ async function fetchQueryData<
   if (rawData && Object.entries(rawData).length > 0)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return transformResponse(rawData as any, queryArgs);
-  else return rawData;
+  else return rawData || {};
 }
 function buildMutationHook<
   QueryArg,
