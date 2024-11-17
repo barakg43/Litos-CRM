@@ -11,6 +11,6 @@ export const httpClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  //   withCredentials: true, disable for now due a bug in render
+  //   withCredentials: true, // disable for now due a bug in render
 });
 // httpClient.interceptors.response.use((response) => response.data);
