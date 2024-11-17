@@ -107,7 +107,7 @@ public class AuthenticationController {
 //				.body("You've been signed out!");
 //	}
 
-	@PostMapping("/refreshtoken")
+	@PostMapping("/refresh-token")
 	public ResponseEntity<?> refreshAccessToken(HttpServletRequest request) {
 		Optional<ResponseCookie> optionalResponseCookie = TokenCookie.extractCookieFromRequest(request,
 				TokenCookie.eType.REFRESH);

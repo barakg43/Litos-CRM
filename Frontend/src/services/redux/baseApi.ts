@@ -25,7 +25,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
       try {
         const refreshResult = await axiosBaseQuery(
           {
-            url: "/auth/refreshtoken",
+            url: "/auth/refresh-token",
             method: "POST",
           },
           undefined
