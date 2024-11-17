@@ -30,11 +30,11 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
           },
           undefined
         );
-        if (refreshResult) {
+        if (refreshResult.data) {
           //   api.dispatch(setAuth());
           // retry the initial query
           result = await axiosBaseQuery(args, signal);
-        } else {
+        } else if (refreshResult.error?.status === StatusCodes.FORBIDDEN) {
           //   api.dispatch(logout(5));
         }
       } finally {
