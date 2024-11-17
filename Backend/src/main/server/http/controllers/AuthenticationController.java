@@ -126,7 +126,8 @@ public class AuthenticationController {
 							"Refresh token is not valid! Please sign in again."));
 		}
 
-		return ResponseEntity.badRequest().body("Refresh Token is empty!");
+		return ResponseEntity.badRequest().body(new ErrorDTO("/auth/refresh-token", "Refresh token not found",
+				HttpStatus.BAD_REQUEST, "Refresh token is missing from request"));
 	}
 }
 
