@@ -4,6 +4,7 @@ import { AxiosError, AxiosRequestConfig } from "axios";
 import { httpClient } from "../axios";
 import { createApi } from "../react-query-toolkit/reactQueryToolkit";
 import { BaseQueryFn } from "../react-query-toolkit/reactQueryToolkitType";
+import { StatusCodes } from "./httpStatusCodes";
 
 // create a new mutex
 const mutex = new Mutex();
@@ -17,7 +18,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
   //   console.log("before:", api);
   const { signal } = api;
   let result = await axiosBaseQuery(args, signal);
-  if (result.error && result.error.status === 401) {
+  if (result.error && result.error.status === StatusCodes.UNAUTHORIZED) {
     // checking whether the mutex is locked
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
