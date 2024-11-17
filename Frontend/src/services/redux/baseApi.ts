@@ -17,7 +17,6 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
   //   console.log("before:", api);
   const { signal } = api;
   let result = await axiosBaseQuery(args, signal);
-
   if (result.error && result.error.status === 401) {
     // checking whether the mutex is locked
     if (!mutex.isLocked()) {
@@ -47,7 +46,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
       result = await axiosBaseQuery(args, signal);
     }
   } else if (result.error) {
-    throw new BaseQueryError(result.error);
+    throw result.error;
   }
 
   return result.data;
@@ -85,16 +84,16 @@ async function axiosBaseQuery(
           };
 
     const result = await httpClient({ ...requestParams, signal });
-    // console.log("result axiosBaseQuery", result);
     return { data: result.data };
   } catch (axiosError) {
-    const err = axiosError as AxiosError;
-    console.log("Query error ", err);
+    const err = axiosError as AxiosError<ErrorDetails>;
     return {
-      error: {
-        status: err.response?.status,
-        message: err.response?.data || err.message,
-      },
+      error: err.response?.data
+        ? { ...err.response?.data }
+        : {
+            status: err.response?.status,
+            message: err.message,
+          },
     };
   }
 }
