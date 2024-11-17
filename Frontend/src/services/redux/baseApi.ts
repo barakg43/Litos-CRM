@@ -62,6 +62,12 @@ type AxiosParamProps = {
 };
 export type AxiosBaseQueryProps = AxiosParamProps | string;
 
+type ErrorDetails = {
+  title: string;
+  message: string;
+  path: string;
+  status: number | undefined;
+};
 async function axiosBaseQuery(
   params: AxiosBaseQueryProps,
   signal: AbortSignal | undefined
