@@ -7,7 +7,6 @@ export function useProductRenews() {
 
   const { daysBeforeExpiration, monthsAfterExpiration } =
     usePeriodExpirationParams();
-
   const {
     data: { productRenews, totalItems } = {
       productRenews: [],

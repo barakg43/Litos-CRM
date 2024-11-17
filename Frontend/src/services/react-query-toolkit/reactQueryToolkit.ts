@@ -84,7 +84,7 @@ function createApiCallback(): CreateApi {
           (endpointsHook as any)[hookName] = hookFn;
         }
       }
-      console.log("endpointsHook", endpointsHook);
+      //   console.log("endpointsHook", endpointsHook);
       return { ...api, ...endpointsHook };
     }
     return api;

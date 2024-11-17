@@ -49,7 +49,8 @@ public class SecurityConfig {
 	}
 
 	public JwtAuthenticationFilter authenticationJwtTokenFilter() {
-		return new JwtAuthenticationFilter(jwtService, handlerExceptionResolver, userDetailsService());
+		return new JwtAuthenticationFilter(jwtService,
+				handlerExceptionResolver, userDetailsService());
 	}
 
 	@Bean
@@ -93,9 +94,10 @@ public class SecurityConfig {
 						.logoutSuccessUrl("/")
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.formLogin(AbstractHttpConfigurer::disable);
+				.formLogin(AbstractHttpConfigurer::disable)
+				.httpBasic(AbstractHttpConfigurer::disable);
 //				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-//				.httpBasic(Customizer.withDefaults());
+
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
