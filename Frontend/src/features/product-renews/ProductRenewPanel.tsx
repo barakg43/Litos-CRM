@@ -46,8 +46,8 @@ function ProductRenewPanel({
         fontSize='2xl'
       >
         <ExtendFormRow
-          label='productDetailDescription'
-          register={register}
+          fieldName='productDetailDescription'
+          registerFn={register}
           translationNS='productRenews'
           error={errors?.productDetailDescription}
           type='textarea'
@@ -57,8 +57,8 @@ function ProductRenewPanel({
         />
 
         <ExtendFormRow
-          label='validityTill'
-          register={register}
+          fieldName='validityTill'
+          registerFn={register}
           error={errors?.validityTill}
           defaultValue={new Date(validityTill || Date.now()).toLocaleDateString(
             "en-CA"
@@ -68,8 +68,8 @@ function ProductRenewPanel({
           translationNS='productRenews'
         />
         <ExtendFormRow
-          label='price'
-          register={register}
+          fieldName='price'
+          registerFn={register}
           error={errors?.price}
           defaultValue={price}
           type='number'
@@ -77,32 +77,32 @@ function ProductRenewPanel({
           translationNS='productRenews'
         />
         <ExtendFormRow
-          label='notes1'
-          register={register}
+          fieldName='notes1'
+          registerFn={register}
           defaultValue={notes1}
           translationNS='productRenews'
           error={errors?.notes1}
           type='textarea'
         />
         <ExtendFormRow
-          label='notes2'
-          register={register}
+          fieldName='notes2'
+          registerFn={register}
           defaultValue={notes2}
           translationNS='productRenews'
           error={errors?.notes2}
           type='textarea'
         />
         <ExtendFormRow
-          label='notes3'
-          register={register}
+          fieldName='notes3'
+          registerFn={register}
           defaultValue={notes3}
           translationNS='productRenews'
           error={errors?.notes3}
           type='textarea'
         />
         <ExtendFormRow
-          label='notes4'
-          register={register}
+          fieldName='notes4'
+          registerFn={register}
           defaultValue={notes4}
           translationNS='productRenews'
           error={errors?.notes4}

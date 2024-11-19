@@ -76,8 +76,8 @@ function AddEditServiceContractForm({
                             "child description"`}
       >
         <ExtendFormRow
-          label='startDateOfContract'
-          register={register}
+          fieldName='startDateOfContract'
+          registerFn={register}
           defaultValue={startDate.toLocaleDateString("en-CA")}
           error={errors?.startDateOfContract}
           type='date'
@@ -97,8 +97,8 @@ function AddEditServiceContractForm({
           sx={{ gridArea: "finish" }}
         />
         <ExtendFormRow
-          label='contractPrice'
-          register={register}
+          fieldName='contractPrice'
+          registerFn={register}
           error={errors?.contractPrice}
           defaultValue={contractPrice}
           type='number'
@@ -106,8 +106,8 @@ function AddEditServiceContractForm({
           sx={{ gridArea: "price" }}
         />
         <ExtendFormRow
-          label='contractDescription'
-          register={register}
+          fieldName='contractDescription'
+          registerFn={register}
           error={errors?.contractDescription}
           defaultValue={contractDescription}
           type='textarea'
