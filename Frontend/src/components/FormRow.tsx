@@ -44,18 +44,25 @@ function FormRow({
     </FormControl>
   );
 }
-
-function ReactComponentInput({
+type ChakraInputType<T extends FieldValues> = Pick<
+  FromRowProps<T>,
+  | "label"
+  | "type"
+  | "defaultValue"
+  | "register"
+  | "rightInnerElement"
+  | "leftInnerElement"
+  | "inputGroupProps"
+>;
+function ReactComponentInput<T extends FieldValues>({
   type,
   label,
   defaultValue,
   register,
-}: {
-  label: string;
-  type?: HTMLInputTypeAttribute | undefined;
-  defaultValue?: string | number | readonly string[] | undefined;
-  register?: UseFormRegisterReturn<string> | undefined;
-}) {
+  rightInnerElement,
+  leftInnerElement,
+  inputGroupProps,
+}: ChakraInputType<T>) {
   switch (type) {
     case "checkbox":
       return (
@@ -68,26 +75,57 @@ function ReactComponentInput({
         />
       );
     case "textarea":
-      return (
-        <Textarea
-          placeholder={label}
-          variant='flushed'
-          defaultValue={defaultValue || ""}
-          fontSize='1.1rem'
-          {...register}
-        />
-      );
+      if (rightInnerElement || leftInnerElement) {
+        return (
+          <InputGroup {...inputGroupProps}>
+            {rightInnerElement && rightInnerElement()}
+            <Textarea
+              placeholder={label}
+              variant='flushed'
+              defaultValue={defaultValue || ""}
+              fontSize='1.1rem'
+              {...register}
+            />
+            {leftInnerElement && leftInnerElement()}
+          </InputGroup>
+        );
+      } else
+        return (
+          <Textarea
+            placeholder={label}
+            variant='flushed'
+            defaultValue={defaultValue || ""}
+            fontSize='1.1rem'
+            {...register}
+          />
+        );
     default:
-      return (
-        <Input
-          type={type}
-          defaultValue={defaultValue || ""}
-          placeholder={label}
-          variant='flushed'
-          fontSize='1.1rem'
-          {...register}
-        />
-      );
+      if (rightInnerElement || leftInnerElement) {
+        return (
+          <InputGroup {...inputGroupProps}>
+            {rightInnerElement && rightInnerElement()}
+            <Input
+              type={type}
+              defaultValue={defaultValue || ""}
+              placeholder={label}
+              variant='flushed'
+              fontSize='1.1rem'
+              {...register}
+            />
+            {leftInnerElement && leftInnerElement()}
+          </InputGroup>
+        );
+      } else
+        return (
+          <Input
+            type={type}
+            defaultValue={defaultValue || ""}
+            placeholder={label}
+            variant='flushed'
+            fontSize='1.1rem'
+            {...register}
+          />
+        );
   }
 }
 export default FormRow;
