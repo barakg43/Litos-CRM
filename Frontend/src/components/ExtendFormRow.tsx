@@ -1,47 +1,43 @@
-import { SystemStyleObject } from "@chakra-ui/react";
 import { TFunction } from "i18next";
-import { HTMLInputTypeAttribute } from "react";
-import {
-  FieldError,
-  FieldValues,
-  Path,
-  UseFormRegister,
-} from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import FormRow from "./FormRow";
+import FormRow, { FromRowProps } from "./FormRow";
 
-type ExtendFormRowProps<T extends FieldValues> = {
-  maxLength?: number | undefined;
+interface ExtendFormRowProps<T extends FieldValues>
+  extends Omit<FromRowProps<T>, "register" | "label"> {
+  maxLength?: number;
   t?: TFunction<string, string>;
-  register: UseFormRegister<T>;
-  type?: HTMLInputTypeAttribute | undefined;
-  isRequired?: boolean | undefined;
-  defaultValue?: string | number | readonly string[] | undefined;
-  error?: FieldError | undefined;
+  fieldName: Path<T>;
+  registerFn: UseFormRegister<T>;
   translationNS: string;
-  keyPrefix?: string | undefined;
-  label: Path<T>;
-  sx?: SystemStyleObject | undefined;
-};
-function ExtendFormRow<T extends FieldValues>({
-  maxLength,
-  label,
-  error,
-  translationNS,
-  keyPrefix,
-  defaultValue,
-  isRequired,
-  register,
-  type,
-  sx,
-}: ExtendFormRowProps<T>) {
+  keyPrefix?: string;
+}
+function ExtendFormRow<T extends FieldValues>(
+  formRowProps: ExtendFormRowProps<T>
+) {
+  const {
+    maxLength,
+    error,
+    translationNS,
+    keyPrefix,
+    defaultValue,
+    isRequired,
+    registerFn,
+    fieldName,
+    type,
+    sx,
+    rightInnerElement,
+    leftInnerElement,
+    inputGroupProps,
+  } = formRowProps;
+
   const { t } = useTranslation(translationNS, { keyPrefix });
   return (
     <FormRow
-      label={t(label)}
+      label={t(`${fieldName}`)}
       defaultValue={defaultValue}
-      error={error?.message}
-      register={register(label, {
+      error={error}
+      register={registerFn(fieldName, {
         required: isRequired ? t("form.required") : undefined,
         valueAsNumber: type === "number",
         maxLength:
@@ -55,6 +51,9 @@ function ExtendFormRow<T extends FieldValues>({
       isRequired={isRequired}
       type={type}
       sx={sx}
+      rightInnerElement={rightInnerElement}
+      leftInnerElement={leftInnerElement}
+      inputGroupProps={inputGroupProps}
     />
   );
 }
