@@ -1,24 +1,46 @@
 import {
   Checkbox,
+  ComponentWithAs,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  InputGroup,
+  InputGroupProps,
+  InputLeftElementProps,
+  InputRightElementProps,
   SystemStyleObject,
   Textarea,
 } from "@chakra-ui/react";
 import { HTMLInputTypeAttribute } from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
-type FromRowProps = {
+import {
+  FieldError,
+  FieldPath,
+  FieldValues,
+  UseFormRegisterReturn,
+} from "react-hook-form";
+
+export type FromRowProps<T extends FieldValues> = {
   label: string;
   type?: HTMLInputTypeAttribute | undefined;
-  register?: UseFormRegisterReturn<string> | undefined;
+  register: UseFormRegisterReturn<FieldPath<T>>;
   isRequired?: boolean;
-  error?: string | undefined;
+  error?: FieldError;
   defaultValue?: string | number | readonly string[] | undefined;
   sx?: SystemStyleObject | undefined;
+  rightInnerElement?: () => JSX.Element;
+  leftInnerElement?: () => JSX.Element;
+  inputGroupProps?: InputGroupProps;
 };
-function FormRow({
+export type InputLeftElementType = ComponentWithAs<
+  "div",
+  InputLeftElementProps
+>;
+export type InputRightElementType = ComponentWithAs<
+  "div",
+  InputRightElementProps
+>;
+function FormRow<T extends FieldValues>({
   label,
   defaultValue,
   type = "text",
@@ -26,7 +48,7 @@ function FormRow({
   error,
   isRequired = false,
   sx,
-}: FromRowProps) {
+}: FromRowProps<T>) {
   return (
     <FormControl
       isRequired={isRequired}
@@ -40,7 +62,7 @@ function FormRow({
       </FormLabel>
 
       {ReactComponentInput({ type, label, defaultValue, register })}
-      {error && <FormErrorMessage>{error}</FormErrorMessage>}
+      {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
   );
 }
