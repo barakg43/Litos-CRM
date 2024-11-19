@@ -1,8 +1,8 @@
 import axios from "axios";
+import { isDevelopmentEnvironment } from "./utils";
 const DEV_IP = "barak-pc";
 
-const isDevEnv = process.env.NODE_ENV === "development";
-const BASE_URL = isDevEnv
+const BASE_URL = isDevelopmentEnvironment
   ? `http://${DEV_IP}:8080/quik/api`
   : "http://10.10.40.20:8080/quik/api";
 // const BASE_URL = "http://barak-pc:8080/quik/api";

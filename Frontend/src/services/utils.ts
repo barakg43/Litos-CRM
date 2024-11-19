@@ -15,6 +15,8 @@ export function calculateForwardDateByMonthsAndDays({
   forwardDate.setMonth(forwardDate.getMonth() + months);
   return forwardDate;
 }
+export const isDevelopmentEnvironment = process.env.NODE_ENV === "development";
+
 export function getStringDate(date: Date) {
   const localDate = new Date(date);
   const day = String(localDate.getDate()).padStart(2, "0");
