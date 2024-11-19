@@ -31,6 +31,7 @@ export type FromRowProps<T extends FieldValues> = {
   rightInnerElement?: () => JSX.Element;
   leftInnerElement?: () => JSX.Element;
   inputGroupProps?: InputGroupProps;
+  withoutLabel?: boolean;
 };
 export type InputLeftElementType = ComponentWithAs<
   "div",
@@ -48,6 +49,7 @@ function FormRow<T extends FieldValues>({
   error,
   isRequired = false,
   sx,
+  withoutLabel = false,
 }: FromRowProps<T>) {
   return (
     <FormControl
@@ -57,9 +59,11 @@ function FormRow<T extends FieldValues>({
       isInvalid={error !== undefined}
       sx={sx}
     >
-      <FormLabel width='12rem' fontSize='1.25rem' fontWeight={600}>
-        {label}
-      </FormLabel>
+      {!withoutLabel && (
+        <FormLabel width='12rem' fontSize='1.25rem' fontWeight={600}>
+          {label}
+        </FormLabel>
+      )}
 
       {ReactComponentInput({ type, label, defaultValue, register })}
       {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
