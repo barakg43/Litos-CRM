@@ -16,26 +16,21 @@ function ExtendFormRow<T extends FieldValues>(
   formRowProps: ExtendFormRowProps<T>
 ) {
   const {
+    fieldName,
     maxLength,
     error,
     translationNS,
     keyPrefix,
-    defaultValue,
-    isRequired,
     registerFn,
-    fieldName,
+    isRequired,
     type,
-    sx,
-    rightInnerElement,
-    leftInnerElement,
-    inputGroupProps,
+    ...restProps
   } = formRowProps;
 
   const { t } = useTranslation(translationNS, { keyPrefix });
   return (
     <FormRow
       label={t(`${fieldName}`)}
-      defaultValue={defaultValue}
       error={error}
       register={registerFn(fieldName, {
         required: isRequired ? t("form.required") : undefined,
@@ -50,10 +45,7 @@ function ExtendFormRow<T extends FieldValues>(
       })}
       isRequired={isRequired}
       type={type}
-      sx={sx}
-      rightInnerElement={rightInnerElement}
-      leftInnerElement={leftInnerElement}
-      inputGroupProps={inputGroupProps}
+      {...restProps}
     />
   );
 }
