@@ -1,8 +1,9 @@
 import { Container, Image } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-
+import { isDevelopmentEnvironment } from "../services/utils";
+const imgSrc =
+  (isDevelopmentEnvironment ? "" : "/quik") + "/assets/logo/logo.webp";
 function Logo() {
-  const imgSrc = "/quik/assets/logo/logo.webp";
   const navigate = useNavigate();
   return (
     <Container centerContent maxHeight='11rem'>
