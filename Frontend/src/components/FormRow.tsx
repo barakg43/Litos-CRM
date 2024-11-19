@@ -32,6 +32,7 @@ export type FromRowProps<T extends FieldValues> = {
   leftInnerElement?: () => JSX.Element;
   inputGroupProps?: InputGroupProps;
   withoutLabel?: boolean;
+  variant?: "outline" | "filled" | "flushed" | "unstyled";
 };
 export type InputLeftElementType = ComponentWithAs<
   "div",
@@ -50,6 +51,7 @@ function FormRow<T extends FieldValues>({
   isRequired = false,
   sx,
   withoutLabel = false,
+  variant,
 }: FromRowProps<T>) {
   return (
     <FormControl
@@ -65,7 +67,7 @@ function FormRow<T extends FieldValues>({
         </FormLabel>
       )}
 
-      {ReactComponentInput({ type, label, defaultValue, register })}
+      {ReactComponentInput({ type, label, defaultValue, register, variant })}
       {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
   );
@@ -79,15 +81,17 @@ type ChakraInputType<T extends FieldValues> = Pick<
   | "rightInnerElement"
   | "leftInnerElement"
   | "inputGroupProps"
+  | "variant"
 >;
 function ReactComponentInput<T extends FieldValues>({
   type,
   label,
-  defaultValue,
+  defaultValue = "",
   register,
   rightInnerElement,
   leftInnerElement,
   inputGroupProps,
+  variant = "flushed",
 }: ChakraInputType<T>) {
   switch (type) {
     case "checkbox":
@@ -95,7 +99,7 @@ function ReactComponentInput<T extends FieldValues>({
         <Checkbox
           placeholder={label}
           variant='flushed'
-          defaultValue={defaultValue || ""}
+          defaultValue={defaultValue}
           fontSize='1.1rem'
           {...register}
         />
@@ -107,8 +111,8 @@ function ReactComponentInput<T extends FieldValues>({
             {rightInnerElement && rightInnerElement()}
             <Textarea
               placeholder={label}
-              variant='flushed'
-              defaultValue={defaultValue || ""}
+              variant={variant}
+              defaultValue={defaultValue}
               fontSize='1.1rem'
               {...register}
             />
@@ -119,8 +123,8 @@ function ReactComponentInput<T extends FieldValues>({
         return (
           <Textarea
             placeholder={label}
-            variant='flushed'
-            defaultValue={defaultValue || ""}
+            variant={variant}
+            defaultValue={defaultValue}
             fontSize='1.1rem'
             {...register}
           />
@@ -132,9 +136,9 @@ function ReactComponentInput<T extends FieldValues>({
             {rightInnerElement && rightInnerElement()}
             <Input
               type={type}
-              defaultValue={defaultValue || ""}
+              defaultValue={defaultValue}
               placeholder={label}
-              variant='flushed'
+              variant={variant}
               fontSize='1.1rem'
               {...register}
             />
@@ -147,7 +151,7 @@ function ReactComponentInput<T extends FieldValues>({
             type={type}
             defaultValue={defaultValue || ""}
             placeholder={label}
-            variant='flushed'
+            variant={variant}
             fontSize='1.1rem'
             {...register}
           />
