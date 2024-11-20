@@ -4,30 +4,33 @@ import {
   Flex,
   FormControl,
   FormHelperText,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
   Link,
   Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { TbLock, TbUser } from "react-icons/tb";
+import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import { useLoginMutation } from "../../services/redux/api/authApi";
 import { LoginCredentials } from "./auth";
 
 function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, handleSubmit, formState, reset } =
+  const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();
+  const { errors } = formState;
+  console.log("watch", watch());
+  const isAllFieldsFilled =
+    watch("username")?.length > 0 && watch("password")?.length > 0;
+
   const handleShowClick = () => setShowPassword(!showPassword);
   const [login, isLoading] = useLoginMutation();
   function handleLogin(credentials: LoginCredentials) {
+    console.log("credentials", credentials);
+
     login(credentials);
   }
-
   return (
     <Flex
       flexDirection='column'
@@ -46,10 +49,7 @@ function LoginComponent() {
         <Flex justifyContent='center' alignItems='center' h='15rem'>
           <Logo />
         </Flex>
-        {/* <Avatar bg='teal.500' /> */}
-        {/* <Heading color='teal.400'>Welcome</Heading> */}
         <Box as='form' onSubmit={handleSubmit(handleLogin)}>
-          {/* <form> */}
           <Stack
             spacing={4}
             p='1rem'
@@ -59,52 +59,55 @@ function LoginComponent() {
             alignItems='center'
             borderRadius={"1rem"}
           >
-            <FormControl
-              display='flex'
-              justifyContent={"center"}
-              alignContent={"center"}
-            >
-              <InputGroup width='20rem' height='3rem'>
-                <InputLeftElement
-                  pointerEvents='none'
-                  color='gray.700'
-                  children={<TbUser />}
-                  height='3rem'
-                />
-                <Input
-                  type='text'
-                  placeholder='Username'
-                  height='3rem'
-                  fontSize='1.2rem'
-                  autoComplete='username'
-                  name='username'
-                />
-              </InputGroup>
-            </FormControl>
+            <ExtendFormRow
+              registerFn={register}
+              fieldName='username'
+              translationNS='auth'
+              keyPrefix='login'
+              type='text'
+              variant='outline'
+              error={errors.username}
+              withoutLabel
+              inputStyle={{ height: "3rem" }}
+              inputGroupProps={{ width: "20rem", height: "3rem" }}
+              leftInnerProps={{
+                pointerEvents: "none",
+                color: "gray.700",
+                children: <TbUser />,
+                height: "3rem",
+                alignContent: "center",
+                textAlign: "center",
+              }}
+            />
             <FormControl width={"20rem"}>
-              <InputGroup height={"3rem"}>
-                <InputLeftElement
-                  pointerEvents='none'
-                  color='gray.700'
-                  children={<TbLock />}
-                  height={"3rem"}
-                  alignContent='center'
-                  textAlign='center'
-                />
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  placeholder='Password'
-                  fontSize='1.2rem'
-                  height='3rem'
-                  autoComplete='password'
-                  name='password'
-                />
-                <InputRightElement width='4.5rem' height='3rem'>
-                  <Button h='1.75rem' size='sm' onClick={handleShowClick}>
-                    {showPassword ? "Hide" : "Show"}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
+              <ExtendFormRow
+                type={showPassword ? "text" : "password"}
+                fieldName='password'
+                registerFn={register}
+                translationNS='auth'
+                keyPrefix='login'
+                error={errors.password}
+                variant='outline'
+                withoutLabel
+                inputStyle={{ height: "3rem" }}
+                rightInnerProps={{
+                  width: "4.5rem",
+                  height: "3rem",
+                  children: (
+                    <Button h='1.75rem' size='sm' onClick={handleShowClick}>
+                      {showPassword ? "Hide" : "Show"}
+                    </Button>
+                  ),
+                }}
+                leftInnerProps={{
+                  pointerEvents: "none",
+                  color: "gray.700",
+                  children: <TbLock />,
+                  height: "3rem",
+                  alignContent: "center",
+                  textAlign: "center",
+                }}
+              />
               <FormHelperText textAlign='right' fontSize={"1.1rem"}>
                 <Link>forgot password?</Link>
               </FormHelperText>
@@ -116,13 +119,12 @@ function LoginComponent() {
               fontSize='1.3rem'
               colorScheme='teal'
               isLoading={isLoading}
-              disabled={!formState.isValid || isLoading}
+              isDisabled={!formState.isValid || isLoading || !isAllFieldsFilled}
               width={"20rem"}
             >
               Login
             </Button>
           </Stack>
-          {/* </form> */}
         </Box>
       </Stack>
       <Box>
