@@ -15,7 +15,7 @@ const authApiSlice = baseApi.injectEndpoints({
 
     login: builder.mutation({
       query: ({ username, password }) => ({
-        url: "account/auth/login",
+        url: "/auth/login",
         method: "POST",
         body: { username, password },
       }),
