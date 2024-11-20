@@ -6,6 +6,7 @@ import FormRow, { FromRowProps } from "./FormRow";
 interface ExtendFormRowProps<T extends FieldValues>
   extends Omit<FromRowProps<T>, "register" | "label"> {
   maxLength?: number;
+  minLength?: number;
   t?: TFunction<string, string>;
   fieldName: Path<T>;
   registerFn: UseFormRegister<T>;
@@ -18,6 +19,7 @@ function ExtendFormRow<T extends FieldValues>(
   const {
     fieldName,
     maxLength,
+    minLength,
     error,
     translationNS,
     keyPrefix,
@@ -35,6 +37,13 @@ function ExtendFormRow<T extends FieldValues>(
       register={registerFn(fieldName, {
         required: isRequired ? t("form.required") : undefined,
         valueAsNumber: type === "number",
+        minLength:
+          minLength != undefined
+            ? {
+                value: minLength,
+                message: t("form.too-small-text", { length: minLength }),
+              }
+            : undefined,
         maxLength:
           maxLength != undefined
             ? {
