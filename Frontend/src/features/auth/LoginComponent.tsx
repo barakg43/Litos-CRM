@@ -73,7 +73,7 @@ function LoginComponent() {
               variant='outline'
               error={errors.username}
               withoutLabel
-              inputStyle={{ height: "3rem" }}
+              inputStyle={{ height: "3rem", padding: "0 25px" }}
               inputGroupProps={{ width: "20rem", height: "3rem" }}
               leftInnerProps={{
                 pointerEvents: "none",
