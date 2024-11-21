@@ -40,6 +40,9 @@ function LoginComponent() {
       justifyContent='center'
       alignItems='center'
     >
+      <LanguageSelector
+        style={{ position: "absolute", top: "1rem", right: "1rem" }}
+      />
       <Stack
         flexDir='column'
         mb='2'
