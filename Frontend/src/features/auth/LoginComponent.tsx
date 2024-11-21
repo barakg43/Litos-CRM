@@ -4,14 +4,16 @@ import {
   Flex,
   FormControl,
   FormHelperText,
+  IconButton,
   Link,
   Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TbLock, TbUser } from "react-icons/tb";
+import { TbEye, TbEyeOff, TbLock, TbUser } from "react-icons/tb";
 import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
+import LanguageSelector from "../../i18n/LanguageSelector";
 import { useLoginMutation } from "../../services/redux/api/authApi";
 import { LoginCredentials } from "./auth";
 
@@ -97,9 +99,27 @@ function LoginComponent() {
                   width: "4.5rem",
                   height: "3rem",
                   children: (
-                    <Button h='1.75rem' size='sm' onClick={handleShowClick}>
-                      {showPassword ? "Hide" : "Show"}
-                    </Button>
+                    <IconButton
+                      background={"transparent"}
+                      border={"none"}
+                      width='fit-content'
+                      height='fit-content'
+                      _focus={{
+                        outline: "none",
+                        boxShadow: "none",
+                        background: "transparent",
+                      }}
+                      borderRadius={"full"}
+                      onClick={handleShowClick}
+                      aria-label='Toggle password visibility'
+                      _hover={{ opacity: 0.6 }}
+                    >
+                      {showPassword ? (
+                        <TbEyeOff size={"1.3rem"} aria-label='Hide password' />
+                      ) : (
+                        <TbEye size={"1.3rem"} aria-label='Show password' />
+                      )}
+                    </IconButton>
                   ),
                 }}
                 leftInnerProps={{
