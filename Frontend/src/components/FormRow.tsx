@@ -35,6 +35,7 @@ export type FromRowProps<T extends FieldValues> = {
   leftInnerProps?: InputLeftElementProps;
   inputGroupProps?: InputGroupProps;
   inputStyle?: SystemStyleObject | undefined;
+  autoComplete?: string;
   withoutLabel?: boolean;
   variant?: "outline" | "filled" | "flushed" | "unstyled";
 };
@@ -103,6 +104,7 @@ type ChakraInputType<T extends FieldValues> = Pick<
   | "inputGroupProps"
   | "variant"
   | "inputStyle"
+  | "autoComplete"
 >;
 function ReactComponentInput<T extends FieldValues>({
   type,
@@ -112,6 +114,7 @@ function ReactComponentInput<T extends FieldValues>({
   rightInnerProps,
   leftInnerProps,
   inputGroupProps,
+  autoComplete,
   inputStyle,
   variant = "flushed",
 }: ChakraInputType<T>) {
@@ -141,6 +144,7 @@ function ReactComponentInput<T extends FieldValues>({
               defaultValue={defaultValue}
               fontSize='1.1rem'
               sx={inputStyle}
+              autoComplete={autoComplete}
               {...register}
             />
           }
@@ -181,6 +185,7 @@ function ReactComponentInput<T extends FieldValues>({
               variant={variant}
               fontSize='1.1rem'
               sx={inputStyle}
+              autoComplete={autoComplete}
               {...register}
             />
           }
