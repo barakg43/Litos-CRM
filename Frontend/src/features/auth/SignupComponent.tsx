@@ -1,23 +1,59 @@
-import { Box, Button, Flex, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  keyframes,
+  Stack,
+} from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TbLock, TbUser } from "react-icons/tb";
+import { useTranslation } from "react-i18next";
+import { z, ZodType } from "zod";
 import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
 import { useRegisterMutation } from "../../services/redux/api/authApi";
 import { SignUpData } from "./auth";
 
+import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
+const SignupSchema: ZodType<SignUpData> = z
+  .object({
+    email: z.string().email(),
+    username: z
+      .string()
+      .min(3, { message: "Username is too short" })
+      .max(40, { message: "Username is too long" }),
+    fullName: z.string().min(3, { message: "Full name is too short" }),
+    password: z
+      .string()
+      .min(8, { message: "Password is too short" })
+      .max(50, { message: "Password is too long" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // path of error
+  });
+
 function SignupComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, formState, reset, watch } =
-    useForm<SignUpData>();
+    useForm<SignUpData>({ resolver: zodResolver(SignupSchema) });
   const { errors } = formState;
   const [signup, isLoading] = useRegisterMutation();
-  const handleShowClick = () => setShowPassword(!showPassword);
-
+  const { t } = useTranslation("auth", { keyPrefix: "signup" });
   function handleSignup(data: SignUpData) {
-    signup(data);
+    const filteredData = {
+      password: data.password,
+      username: data.username,
+      fullName: data.fullName,
+      email: data.email,
+    };
+    signup(filteredData);
   }
   return (
     <Flex
