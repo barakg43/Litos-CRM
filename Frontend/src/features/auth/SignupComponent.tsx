@@ -44,7 +44,9 @@ function SignupComponent() {
           <Stack
             spacing={4}
             p='1rem'
-            backgroundColor='whiteAlpha.900'
+            backgroundColor='
+  
+            whiteAlpha.900'
             boxShadow='md'
             width={"30rem"}
             alignItems='center'
@@ -71,14 +73,14 @@ function SignupComponent() {
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
               inputGroupProps={{ width: "20rem", height: "3rem" }}
-              leftInnerProps={{
-                pointerEvents: "none",
-                color: "gray.700",
-                children: <TbUser />,
-                height: "3rem",
-                alignContent: "center",
-                textAlign: "center",
-              }}
+              //   leftInnerProps={{
+              //     pointerEvents: "none",
+              //     color: "gray.700",
+              //     children: <TbUser />,
+              //     height: "3rem",
+              //     alignContent: "center",
+              //     textAlign: "center",
+              //   }}
             />
             <ExtendFormRow
               type={showPassword ? "text" : "password"}
@@ -94,20 +96,41 @@ function SignupComponent() {
                 width: "4.5rem",
                 height: "3rem",
                 children: (
-                  <Button h='1.75rem' size='sm' onClick={handleShowClick}>
-                    {showPassword ? "Hide" : "Show"}
-                  </Button>
+                  <ShowPasswordToggleButton
+                    showPassword={showPassword}
+                    setShowPassword={setShowPassword}
+                  />
                 ),
               }}
-              leftInnerProps={{
-                pointerEvents: "none",
-                color: "gray.700",
-                children: <TbLock />,
-                height: "3rem",
-                alignContent: "center",
-                textAlign: "center",
-              }}
+              //   leftInnerProps={{
+              //     pointerEvents: "none",
+              //     color: "gray.700",
+              //     children: <TbLock />,
+              //     height: "3rem",
+              //     alignContent: "center",
+              //     textAlign: "center",
+              //   }}
             />
+            <ExtendFormRow
+              type={showPassword ? "text" : "password"}
+              fieldName='confirmPassword'
+              registerFn={register}
+              translationNS='auth'
+              keyPrefix='signup'
+              error={errors.password}
+              variant='outline'
+              //   withoutLabel
+              inputStyle={{ height: "3rem" }}
+              //   leftInnerProps={{
+              //     pointerEvents: "none",
+              //     color: "gray.700",
+              //     children: <TbLock />,
+              //     height: "3rem",
+              //     alignContent: "center",
+              //     textAlign: "center",
+              //   }}
+            />
+
             <ExtendFormRow
               type='email'
               fieldName='email'
@@ -118,14 +141,14 @@ function SignupComponent() {
               variant='outline'
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
-              leftInnerProps={{
-                pointerEvents: "none",
-                color: "gray.700",
-                children: <TbLock />,
-                height: "3rem",
-                alignContent: "center",
-                textAlign: "center",
-              }}
+              //   leftInnerProps={{
+              //     pointerEvents: "none",
+              //     color: "gray.700",
+              //     children: <TbLock />,
+              //     height: "3rem",
+              //     alignContent: "center",
+              //     textAlign: "center",
+              //   }}
             />
             <Button
               borderRadius={3}
@@ -137,7 +160,7 @@ function SignupComponent() {
               isDisabled={!formState.isValid || isLoading}
               width={"20rem"}
             >
-              Login
+              {t("register")}
             </Button>
           </Stack>
         </Box>
