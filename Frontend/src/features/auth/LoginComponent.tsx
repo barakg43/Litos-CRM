@@ -133,15 +133,16 @@ function LoginComponent() {
               isDisabled={!formState.isValid || isLoading || !isAllFieldsFilled}
               width={"20rem"}
             >
-              Login
+              {t("login")}
             </Button>
           </Stack>
         </Box>
       </Stack>
       <Box>
-        New to us?{" "}
-        <Link color='teal.500' href='#'>
-          Sign Up
+        {t("new-employee")}
+        {"? "}
+        <Link color='teal.500' href='/signup'>
+          {t("signup")}
         </Link>
       </Box>
     </Flex>
