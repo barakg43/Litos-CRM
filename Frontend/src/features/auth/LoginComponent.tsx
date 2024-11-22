@@ -4,29 +4,30 @@ import {
   Flex,
   FormControl,
   FormHelperText,
-  IconButton,
   Link,
   Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { TbEye, TbEyeOff, TbLock, TbUser } from "react-icons/tb";
+import { useTranslation } from "react-i18next";
+import { TbLock, TbUser } from "react-icons/tb";
 import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
 import { useLoginMutation } from "../../services/redux/api/authApi";
 import { LoginCredentials } from "./auth";
+import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
 function LoginComponent() {
-  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();
+  const [showPassword, setShowPassword] = useState(false);
+
   const { errors } = formState;
-  console.log("watch", watch());
   const isAllFieldsFilled =
     watch("username")?.length > 0 && watch("password")?.length > 0;
+  const { t } = useTranslation("auth", { keyPrefix: "login" });
 
-  const handleShowClick = () => setShowPassword(!showPassword);
   const [login, isLoading] = useLoginMutation();
   function handleLogin(credentials: LoginCredentials) {
     console.log("credentials", credentials);
@@ -99,27 +100,10 @@ function LoginComponent() {
                   width: "4.5rem",
                   height: "3rem",
                   children: (
-                    <IconButton
-                      background={"transparent"}
-                      border={"none"}
-                      width='fit-content'
-                      height='fit-content'
-                      _focus={{
-                        outline: "none",
-                        boxShadow: "none",
-                        background: "transparent",
-                      }}
-                      borderRadius={"full"}
-                      onClick={handleShowClick}
-                      aria-label='Toggle password visibility'
-                      _hover={{ opacity: 0.6 }}
-                    >
-                      {showPassword ? (
-                        <TbEyeOff size={"1.3rem"} aria-label='Hide password' />
-                      ) : (
-                        <TbEye size={"1.3rem"} aria-label='Show password' />
-                      )}
-                    </IconButton>
+                    <ShowPasswordToggleButton
+                      showPassword={showPassword}
+                      setShowPassword={setShowPassword}
+                    />
                   ),
                 }}
                 leftInnerProps={{
@@ -131,8 +115,12 @@ function LoginComponent() {
                   textAlign: "center",
                 }}
               />
-              <FormHelperText textAlign='right' fontSize={"1.1rem"}>
-                <Link>forgot password?</Link>
+              <FormHelperText
+                textAlign='end'
+                fontSize={"1.1rem"}
+                color={"teal.500"}
+              >
+                <Link>{t("forgot-password")}</Link>
               </FormHelperText>
             </FormControl>
             <Button
