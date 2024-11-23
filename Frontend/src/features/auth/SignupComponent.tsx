@@ -153,7 +153,7 @@ function SignupComponent() {
               registerFn={register}
               translationNS='auth'
               keyPrefix='signup'
-              error={errors.password}
+              error={errors.confirmPassword}
               variant='outline'
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
@@ -173,7 +173,7 @@ function SignupComponent() {
               registerFn={register}
               translationNS='auth'
               keyPrefix='signup'
-              error={errors.password}
+              error={errors.email}
               variant='outline'
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
