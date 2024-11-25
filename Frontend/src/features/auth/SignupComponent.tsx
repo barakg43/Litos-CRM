@@ -184,7 +184,7 @@ function SignupComponent() {
               fontSize='1.3rem'
               colorScheme='teal'
               isLoading={isLoading}
-              isDisabled={!formState.isValid || isLoading}
+              isDisabled={isLoading}
               width={"20rem"}
             >
               {t("register")}
