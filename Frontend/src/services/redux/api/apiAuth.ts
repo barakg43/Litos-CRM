@@ -1,16 +1,16 @@
+import { UserDetails } from "../../../features/auth/auth";
 import { baseApi } from "../baseApi";
-
-interface User {
-  first_name: string;
-  last_name: string;
-  email: string;
-}
+import { useAuth } from "../slices/authStore";
 
 const authApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    retrieveUser: builder.query<User, void>({
+    retrieveUser: builder.query<UserDetails, void>({
       query: () => "/auth/users/me/",
       providesQueryKeys: () => ["User"],
+      transformResponse: (user: UserDetails) => {
+        useAuth.getState().login(user);
+        return user;
+      },
     }),
 
     login: builder.mutation({
@@ -19,6 +19,10 @@ const authApiSlice = baseApi.injectEndpoints({
         method: "POST",
         body: { username, password },
       }),
+      transformResponse: (user: UserDetails) => {
+        useAuth.getState().login(user);
+        return user;
+      },
     }),
     register: builder.mutation({
       query: ({ username, fullName, email, password }) => ({
@@ -33,6 +37,9 @@ const authApiSlice = baseApi.injectEndpoints({
         url: "/auth/logout",
         method: "POST",
       }),
+      transformResponse: () => {
+        useAuth.getState().logout();
+      },
     }),
     refreshToken: builder.mutation({
       query: () => ({
