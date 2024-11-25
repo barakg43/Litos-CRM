@@ -14,7 +14,7 @@ import { TbLock, TbUser } from "react-icons/tb";
 import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
-import { useLoginMutation } from "../../services/redux/api/authApi";
+import { useLoginMutation } from "../../services/redux/api/apiAuth";
 import { LoginCredentials } from "./auth";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 

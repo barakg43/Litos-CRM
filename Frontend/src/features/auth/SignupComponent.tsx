@@ -7,7 +7,7 @@ import { z, ZodType } from "zod";
 import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
-import { useRegisterMutation } from "../../services/redux/api/authApi";
+import { useRegisterMutation } from "../../services/redux/api/apiAuth";
 import { SignUpData } from "./auth";
 
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
