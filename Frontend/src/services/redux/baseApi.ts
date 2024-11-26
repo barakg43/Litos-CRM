@@ -4,6 +4,7 @@ import { httpClient } from "../axios";
 import { createApi } from "../react-query-toolkit/reactQueryToolkit";
 import { BaseQueryFn } from "../react-query-toolkit/reactQueryToolkitType";
 import { StatusCodes } from "./httpStatusCodes";
+import { useAuth } from "./slices/authStore";
 
 // create a new mutex
 const mutex = new Mutex();
@@ -33,8 +34,11 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
           //   api.dispatch(setAuth());
           // retry the initial query
           result = await axiosBaseQuery(args, signal);
-        } else if (refreshResult.error?.status === StatusCodes.FORBIDDEN) {
-          //   api.dispatch(logout(5));
+        } else if (
+          refreshResult.error?.status === StatusCodes.FORBIDDEN ||
+          refreshResult.error?.status === StatusCodes.BAD_REQUEST
+        ) {
+          useAuth.getState().logout();
         }
       } finally {
         // release must be called once the mutex should be released again.
