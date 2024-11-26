@@ -265,13 +265,13 @@ function buildMutationHook<
   QueryArg,
   ResultType
 > {
-  return function useMutationHook() {
+  return function useMutationHook({ onSuccess, onError }) {
     const {
       query,
       invalidatesKeys,
       transformResponse = defaultTransformResponse,
-      onError,
-      onSuccess,
+      onError: onErrorPreDefined,
+      onSuccess: onSuccessPreDefined,
     } = definition;
     const queryClient = useQueryClient();
 
@@ -294,8 +294,8 @@ function buildMutationHook<
       onSuccess: (data, originalArgs) => {
         const typedData = data as ResultType;
 
+        onSuccessPreDefined?.(originalArgs, typedData);
         onSuccess?.(originalArgs, typedData);
-
         if (invalidatesKeys)
           queryClient.invalidateQueries({
             queryKey: invalidatesKeys(originalArgs, typedData),
@@ -303,6 +303,7 @@ function buildMutationHook<
       },
 
       onError: (error, args) => {
+        onErrorPreDefined?.(args, error);
         onError?.(args, error);
       },
     });
