@@ -351,8 +351,16 @@ type MutationHookNames<Definitions extends EndpointDefinitions> = {
   >;
 };
 
+export type QueryOptions = {
+  autoCancellation?: boolean;
+  refetchInterval?: number | false | false | undefined;
+  enabled?: boolean;
+  retryOnMount?: boolean;
+  retry?: boolean | number;
+};
 export type UseQuery<QueryArg, ResultType, TError = string> = (
-  args: QueryArg
+  args: QueryArg,
+  options: QueryOptions
 ) => QueryResult<QueryArg, ResultType, TError>;
 type QueryResult<QueryArg = unknown, TData = unknown, TError = DefaultError> =
   | QueryErrorResult<QueryArg, TData, TError>
