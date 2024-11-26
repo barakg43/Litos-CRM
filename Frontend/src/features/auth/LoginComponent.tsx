@@ -11,21 +11,30 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { TbLock, TbUser } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import ExtendFormRow from "../../components/ExtendFormRow";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
-import { useLoginMutation } from "../../services/redux/api/apiAuth";
+import {
+  useLoginMutation,
+  useRetrieveUserQuery,
+} from "../../services/redux/api/apiAuth";
 import { useAuth } from "../../services/redux/slices/authStore";
 import { LoginCredentials } from "./auth";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
 function LoginComponent() {
+  const { isLoading: isLoadingUser } = useRetrieveUserQuery(undefined, {
+    refetchInterval: false,
+    retry: false,
+  });
+  const loginAction = useAuth((state) => state.login);
   const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();
+  const isAlreadyAuthenticated = useAuth((state) => state.isAuthenticated);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const loginAction = useAuth((state) => state.login);
   const { errors } = formState;
   const isAllFieldsFilled =
     watch("username")?.length > 0 && watch("password")?.length > 0;
@@ -40,6 +49,9 @@ function LoginComponent() {
   function handleLogin(credentials: LoginCredentials) {
     login(credentials);
   }
+
+  if (isLoadingUser) return <LoadingSpinner />;
+  if (isAlreadyAuthenticated) return <Navigate to='/' replace />;
   return (
     <Flex
       flexDirection='column'
