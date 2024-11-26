@@ -45,15 +45,15 @@ function RenewServicePanel({
       <Flex grow={1} gap={6} fontSize='2xl'>
         <VStack>
           <ExtendFormRow
-            label='contractDescription'
-            register={register}
+            fieldName='contractDescription'
+            registerFn={register}
             translationNS='serviceRenews'
             error={errors?.contractDescription}
             type='textarea'
           />
           <ExtendFormRow
-            label='contractPrice'
-            register={register}
+            fieldName='contractPrice'
+            registerFn={register}
             translationNS='serviceRenews'
             error={errors?.contractPrice}
             defaultValue={contractPrice}
