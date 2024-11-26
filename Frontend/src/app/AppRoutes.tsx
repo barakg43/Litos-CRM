@@ -11,20 +11,23 @@ import Settings from "../pages/Settings";
 import SignUp from "../pages/Signup";
 import Login from "./../pages/Login.tsx";
 import AppLayout from "./AppLayout.tsx";
+import PrivateRoutes from "./PrivateRoutes.tsx";
 ``;
 function AppRoutes() {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
-        <Route index element={<Navigate replace to='/customers' />} />
-        <Route path='/product-renews' element={<ProductRenews />} />
-        <Route path='/service-renews' element={<ServiceRenews />} />
-        <Route path='/activities' element={<Activities />} />
-        <Route path='/customers' element={<Customers />} />
-        <Route path='/customers/:customerId' element={<Customer />} />
-        <Route path='/reports' element={<Reports />} />
-        <Route path='/settings' element={<Settings />} />
-        <Route path='/account' element={<Account />} />
+      <Route element={<PrivateRoutes />}>
+        <Route element={<AppLayout />}>
+          <Route index element={<Navigate replace to='/customers' />} />
+          <Route path='/product-renews' element={<ProductRenews />} />
+          <Route path='/service-renews' element={<ServiceRenews />} />
+          <Route path='/activities' element={<Activities />} />
+          <Route path='/customers' element={<Customers />} />
+          <Route path='/customers/:customerId' element={<Customer />} />
+          <Route path='/reports' element={<Reports />} />
+          <Route path='/settings' element={<Settings />} />
+          <Route path='/account' element={<Account />} />
+        </Route>
       </Route>
       <Route path='/signup' element={<SignUp />} />
       <Route path='/login' element={<Login />} />
