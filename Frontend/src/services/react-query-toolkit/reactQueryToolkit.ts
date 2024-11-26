@@ -21,6 +21,7 @@ import {
   MutationHookName,
   QueryDefinition,
   QueryHookName,
+  QueryOptions,
   TransformedResponse,
   UseMutation,
   UseQuery,
@@ -141,7 +142,10 @@ function buildQueryHook<
   baseQuery: BaseQuery,
   definition: QueryDefinition<QueryArg, BaseQuery, ResultType, TQueryKey>
 ): UseQuery<QueryArg, ResultType, string> {
-  return function useQueryHook(queryArgs: QueryArg) {
+  return function useQueryHook(
+    queryArgs: QueryArg,
+    externalOptions: QueryOptions
+  ) {
     const queryClient = useQueryClient();
 
     const {
@@ -152,13 +156,19 @@ function buildQueryHook<
       enabled,
       refetchInterval,
     } = definition;
-
+    const {
+      enabled: externalEnabled,
+      refetchInterval: externalRefetchInterval,
+      autoCancellation: externalAutoCancellation,
+      retry,
+      retryOnMount,
+    } = externalOptions ?? {};
     function prefetchQuery(args: QueryArg) {
       queryClient.prefetchQuery({
         queryKey: providesQueryKeys(args),
         queryFn: ({ signal }) =>
           fetchQueryData(
-            autoCancellation,
+            externalAutoCancellation ?? autoCancellation,
             args,
             query,
             baseQuery,
@@ -172,15 +182,17 @@ function buildQueryHook<
       queryKey: providesQueryKeys(queryArgs),
       queryFn: ({ signal }) =>
         fetchQueryData(
-          autoCancellation,
+          externalAutoCancellation ?? autoCancellation,
           queryArgs,
           query,
           baseQuery,
           transformResponse,
           signal
         ),
-      enabled,
-      refetchInterval,
+      retry,
+      retryOnMount,
+      enabled: externalEnabled ?? enabled,
+      refetchInterval: externalRefetchInterval ?? refetchInterval,
     });
     switch (status) {
       case "success":
