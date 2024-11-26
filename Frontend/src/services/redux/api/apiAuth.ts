@@ -5,7 +5,7 @@ import { useAuth } from "../slices/authStore";
 const authApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     retrieveUser: builder.query<UserDetails, void>({
-      query: () => "/auth/users/me/",
+      query: () => "/users/me",
       providesQueryKeys: () => ["User"],
       transformResponse: (user: UserDetails) => {
         useAuth.getState().login(user);
