@@ -156,7 +156,6 @@ function buildQueryHook<
     function prefetchQuery(args: QueryArg) {
       queryClient.prefetchQuery({
         queryKey: providesQueryKeys(args),
-
         queryFn: ({ signal }) =>
           fetchQueryData(
             autoCancellation,
@@ -183,7 +182,6 @@ function buildQueryHook<
       enabled,
       refetchInterval,
     });
-
     switch (status) {
       case "success":
         return {
@@ -197,7 +195,7 @@ function buildQueryHook<
         break;
       case "error":
         return {
-          data: {},
+          data: undefined,
           isLoading: false,
           isError: true,
           error: error.message,
@@ -206,7 +204,7 @@ function buildQueryHook<
         };
       default:
         return {
-          data: {},
+          data: undefined,
           isLoading: true,
           isError: false,
           error: null,
