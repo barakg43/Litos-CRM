@@ -67,16 +67,13 @@ type ResultTypeFrom<D extends BaseEndpointDefinition<any, any, any>> =
 type QueryKeyTypeFrom<D extends EndpointDefinition<any, any, any, any>> =
   D extends EndpointDefinition<any, any, any, infer QK> ? QK : unknown;
 
-export type UseMutation<QueryArg, ResultType> = ({
-  onSuccess,
-  onError,
-}: {
+export type UseMutation<QueryArg, ResultType> = (
   onSuccess?: (
     originalArgs: QueryArg,
     result: ResultType
-  ) => MaybePromise<unknown>;
-  onError?: (originalArgs: QueryArg, error: Error) => MaybePromise<unknown>;
-}) => readonly [
+  ) => MaybePromise<unknown>,
+  onError?: (originalArgs: QueryArg, error: Error) => MaybePromise<unknown>
+) => readonly [
   UseMutateFunction<unknown, unknown, QueryArg, unknown>,
   boolean
 ] & {

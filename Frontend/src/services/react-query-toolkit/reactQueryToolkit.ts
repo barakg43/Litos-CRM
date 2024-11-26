@@ -269,7 +269,7 @@ function buildMutationHook<
   QueryArg,
   ResultType
 > {
-  return function useMutationHook({ onSuccess, onError }) {
+  return function useMutationHook(onSuccess, onError) {
     const {
       query,
       invalidatesKeys,
