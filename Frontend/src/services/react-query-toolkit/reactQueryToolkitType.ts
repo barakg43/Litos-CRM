@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DefaultError, UseMutateFunction } from "@tanstack/react-query";
+import { DefaultError, Query, UseMutateFunction } from "@tanstack/react-query";
 import { HasRequiredProps, OmitFromUnion, UnwrapPromise } from "./tsHelpers";
 
 export enum DefinitionType {
@@ -148,6 +148,13 @@ interface QueryExtraOptions<TQueryKey extends QueryKey, QueryArg> {
    */
   providesQueryKeys: (args: QueryArg) => TQueryKey;
   autoCancellation?: boolean;
+  refetchInterval?:
+    | number
+    | false
+    | ((
+        query: Query<unknown, Error, unknown, TQueryKey>
+      ) => number | false | undefined);
+  enabled?: boolean;
 }
 interface MutationExtraOptions<
   TQueryKey extends QueryKey,

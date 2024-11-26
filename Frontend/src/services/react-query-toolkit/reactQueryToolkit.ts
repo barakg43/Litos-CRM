@@ -149,6 +149,8 @@ function buildQueryHook<
       transformResponse = defaultTransformResponse,
       autoCancellation,
       providesQueryKeys,
+      enabled,
+      refetchInterval,
     } = definition;
 
     function prefetchQuery(args: QueryArg) {
@@ -178,6 +180,8 @@ function buildQueryHook<
           transformResponse,
           signal
         ),
+      enabled,
+      refetchInterval,
     });
 
     switch (status) {
