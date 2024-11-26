@@ -1,4 +1,4 @@
-import { UserDetails } from "../../../features/auth/auth";
+import { LoginCredentials, UserDetails } from "../../../features/auth/auth";
 import { baseApi } from "../baseApi";
 import { useAuth } from "../slices/authStore";
 
@@ -13,17 +13,14 @@ const authApiSlice = baseApi.injectEndpoints({
       },
     }),
 
-    login: builder.mutation({
+    login: builder.mutation<UserDetails, LoginCredentials>({
       query: ({ username, password }) => ({
         url: "/auth/login",
         method: "POST",
         body: { username, password },
       }),
-      transformResponse: (user: UserDetails) => {
-        useAuth.getState().login(user);
-        return user;
-      },
     }),
+
     register: builder.mutation({
       query: ({ username, fullName, email, password }) => ({
         url: "/auth/signup",
