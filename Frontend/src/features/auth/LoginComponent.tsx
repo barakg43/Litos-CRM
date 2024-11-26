@@ -11,10 +11,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { TbLock, TbUser } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
 import { useLoginMutation } from "../../services/redux/api/apiAuth";
+import { useAuth } from "../../services/redux/slices/authStore";
 import { LoginCredentials } from "./auth";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
@@ -22,16 +24,20 @@ function LoginComponent() {
   const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
+  const loginAction = useAuth((state) => state.login);
   const { errors } = formState;
   const isAllFieldsFilled =
     watch("username")?.length > 0 && watch("password")?.length > 0;
   const { t } = useTranslation("auth", { keyPrefix: "login" });
 
-  const [login, isLoading] = useLoginMutation();
+  const [login, isLoading] = useLoginMutation({
+    onSuccess: (_, user) => {
+      loginAction(user);
+      navigate("/");
+    },
+  });
   function handleLogin(credentials: LoginCredentials) {
-    console.log("credentials", credentials);
-
     login(credentials);
   }
   return (
