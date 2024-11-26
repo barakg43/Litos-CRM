@@ -120,6 +120,7 @@ function buildHook<
       endpointName
     )}Mutation` as MutationHookName<string>;
     hookFn = buildMutationHook<QueryArg, BaseQuery, ResultType, TQueryKey>({
+      endpointName,
       baseQuery,
       definition,
     });
@@ -259,6 +260,7 @@ function buildMutationHook<
   ResultType,
   TQueryKey extends QueryKey
 >({
+  endpointName,
   baseQuery,
   definition,
 }: BuildMutationHook<QueryArg, BaseQuery, ResultType, TQueryKey>): UseMutation<
@@ -291,6 +293,7 @@ function buildMutationHook<
           undefined
         );
       },
+      mutationKey: [endpointName],
       onSuccess: (data, originalArgs) => {
         const typedData = data as ResultType;
 

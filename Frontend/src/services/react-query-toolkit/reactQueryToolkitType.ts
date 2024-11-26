@@ -308,6 +308,7 @@ export type BuildMutationHook<
   ResultType,
   TQueryKey extends QueryKey
 > = {
+  endpointName: string;
   baseQuery: BaseQuery;
   definition: MutationDefinition<QueryArg, BaseQuery, ResultType, TQueryKey>;
 };
