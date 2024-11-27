@@ -39,6 +39,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
           refreshResult.error?.status === StatusCodes.BAD_REQUEST
         ) {
           useAuth.getState().logout();
+          throw result.error;
         }
       } finally {
         // release must be called once the mutex should be released again.
