@@ -76,7 +76,6 @@ function SignupComponent() {
             spacing={4}
             p='1rem'
             backgroundColor='
-  
             whiteAlpha.900'
             boxShadow='md'
             width={"30rem"}
@@ -101,6 +100,7 @@ function SignupComponent() {
               type='text'
               variant='outline'
               error={errors.username}
+              autoComplete='username'
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
               inputGroupProps={{ width: "20rem", height: "3rem" }}
@@ -120,6 +120,7 @@ function SignupComponent() {
               translationNS='auth'
               keyPrefix='signup'
               error={errors.password}
+              autoComplete='new-password'
               variant='outline'
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
@@ -149,6 +150,7 @@ function SignupComponent() {
               translationNS='auth'
               keyPrefix='signup'
               error={errors.confirmPassword}
+              autoComplete='new-password'
               variant='outline'
               //   withoutLabel
               inputStyle={{ height: "3rem" }}
