@@ -353,16 +353,17 @@ type MutationHookNames<Definitions extends EndpointDefinitions> = {
   >;
 };
 
-export type QueryOptions = {
+export interface QueryOptions<QueryArg, ResultType, Err = Error>
+  extends ResultHandlers<QueryArg, ResultType, Err> {
   autoCancellation?: boolean;
   refetchInterval?: number | false | false | undefined;
   enabled?: boolean;
   retryOnMount?: boolean;
   retry?: boolean | number;
-};
+}
 export type UseQuery<QueryArg, ResultType, TError = string> = (
   args: QueryArg,
-  options: QueryOptions
+  options: QueryOptions<QueryArg, ResultType, TError>
 ) => QueryResult<QueryArg, ResultType, TError>;
 type QueryResult<QueryArg = unknown, TData = unknown, TError = DefaultError> =
   | QueryErrorResult<QueryArg, TData, TError>
