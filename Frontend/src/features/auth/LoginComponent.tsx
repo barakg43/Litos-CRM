@@ -78,6 +78,7 @@ function LoginComponent() {
               keyPrefix='login'
               type='text'
               variant='outline'
+              autoComplete='username'
               error={errors.username}
               withoutLabel
               inputStyle={{ height: "3rem", padding: "0 25px" }}
@@ -98,6 +99,7 @@ function LoginComponent() {
                 registerFn={register}
                 translationNS='auth'
                 keyPrefix='login'
+                autoComplete='current-password'
                 error={errors.password}
                 variant='outline'
                 withoutLabel
