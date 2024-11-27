@@ -11,35 +11,26 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { TbLock, TbUser } from "react-icons/tb";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ExtendFormRow from "../../components/ExtendFormRow";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
-import {
-  useLoginMutation,
-  useRetrieveUserQuery,
-} from "../../services/redux/api/apiAuth";
+import { useLoginMutation } from "../../services/redux/api/apiAuth";
 import { useAuth } from "../../services/redux/slices/authStore";
 import { LoginCredentials } from "./auth";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
 function LoginComponent() {
-  const { isLoading: isLoadingUser } = useRetrieveUserQuery(undefined, {
-    refetchInterval: false,
-    retry: false,
-  });
   const loginAction = useAuth((state) => state.login);
+  //   const isAlreadyAuthenticated = useAuth((state) => state.isAuthenticated);
+  const navigate = useNavigate();
   const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();
-  const isAlreadyAuthenticated = useAuth((state) => state.isAuthenticated);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const { errors } = formState;
   const isAllFieldsFilled =
     watch("username")?.length > 0 && watch("password")?.length > 0;
   const { t } = useTranslation("auth", { keyPrefix: "login" });
-
   const [login, isLoading] = useLoginMutation({
     onSuccess: (_, user) => {
       loginAction(user);
@@ -49,9 +40,6 @@ function LoginComponent() {
   function handleLogin(credentials: LoginCredentials) {
     login(credentials);
   }
-
-  if (isLoadingUser) return <LoadingSpinner />;
-  if (isAlreadyAuthenticated) return <Navigate to='/' replace />;
   return (
     <Flex
       flexDirection='column'
