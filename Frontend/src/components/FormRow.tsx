@@ -51,18 +51,11 @@ export type InputRightElementType = ComponentWithAs<
 >;
 function FormRow<T extends FieldValues>({
   label,
-  defaultValue,
-  type = "text",
-  register,
   error,
   isRequired = false,
   sx,
   withoutLabel = false,
-  inputGroupProps,
-  leftInnerProps,
-  inputStyle,
-  rightInnerProps,
-  variant,
+  ...inputProps
 }: FromRowProps<T>) {
   return (
     <FormControl
@@ -82,15 +75,8 @@ function FormRow<T extends FieldValues>({
 
       <Flex flexDirection='column' alignItems='start'>
         {ReactComponentInput({
-          type,
           label,
-          defaultValue,
-          register,
-          variant,
-          inputGroupProps,
-          leftInnerProps,
-          rightInnerProps,
-          inputStyle,
+          ...inputProps,
         })}
         {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
       </Flex>
@@ -111,7 +97,7 @@ type ChakraInputType<T extends FieldValues> = Pick<
   | "autoComplete"
 >;
 function ReactComponentInput<T extends FieldValues>({
-  type,
+  type = "text",
   label,
   defaultValue = "",
   register,
