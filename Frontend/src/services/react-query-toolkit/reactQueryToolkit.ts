@@ -21,7 +21,6 @@ import {
   MutationHookName,
   QueryDefinition,
   QueryHookName,
-  QueryOptions,
   TransformedResponse,
   UseMutation,
   UseQuery,
@@ -141,11 +140,8 @@ function buildQueryHook<
 >(
   baseQuery: BaseQuery,
   definition: QueryDefinition<QueryArg, BaseQuery, ResultType, TQueryKey>
-): UseQuery<QueryArg, ResultType, string> {
-  return function useQueryHook(
-    queryArgs: QueryArg,
-    externalOptions: QueryOptions
-  ) {
+): UseQuery<QueryArg, ResultType> {
+  return function useQueryHook(queryArgs, externalOptions) {
     const queryClient = useQueryClient();
 
     const {
@@ -162,6 +158,8 @@ function buildQueryHook<
       autoCancellation: externalAutoCancellation,
       retry,
       retryOnMount,
+      onSuccess,
+      onError,
     } = externalOptions ?? {};
     function prefetchQuery(args: QueryArg) {
       queryClient.prefetchQuery({
@@ -196,6 +194,7 @@ function buildQueryHook<
     });
     switch (status) {
       case "success":
+        onSuccess?.(queryArgs, data);
         return {
           data,
           error: undefined,
@@ -204,8 +203,8 @@ function buildQueryHook<
           //   status: "success",
           prefetchQuery,
         };
-        break;
       case "error":
+        onError?.(queryArgs, error.message);
         return {
           data: undefined,
           isLoading: false,
