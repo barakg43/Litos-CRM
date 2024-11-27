@@ -1,16 +1,11 @@
 import { LoginCredentials, UserDetails } from "../../../features/auth/auth";
 import { baseApi } from "../baseApi";
-import { useAuth } from "../slices/authStore";
 
 const authApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     retrieveUser: builder.query<UserDetails, void>({
       query: () => "/users/me",
       providesQueryKeys: () => ["User"],
-      transformResponse: (user: UserDetails) => {
-        useAuth.getState().login(user);
-        return user;
-      },
     }),
 
     login: builder.mutation<UserDetails, LoginCredentials>({
@@ -34,9 +29,6 @@ const authApiSlice = baseApi.injectEndpoints({
         url: "/auth/logout",
         method: "POST",
       }),
-      transformResponse: () => {
-        useAuth.getState().logout();
-      },
     }),
     refreshToken: builder.mutation({
       query: () => ({
