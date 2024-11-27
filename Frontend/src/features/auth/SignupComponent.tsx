@@ -10,6 +10,7 @@ import LanguageSelector from "../../i18n/LanguageSelector";
 import { useRegisterMutation } from "../../services/redux/api/apiAuth";
 import { SignUpData } from "./auth";
 
+import { useNavigate } from "react-router-dom";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 const SignupSchema: ZodType<SignUpData> = z
   .object({
@@ -34,8 +35,11 @@ function SignupComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit, formState, reset, watch } =
     useForm<SignUpData>({ resolver: zodResolver(SignupSchema) });
+  const navigate = useNavigate();
   const { errors } = formState;
-  const [signup, isLoading] = useRegisterMutation();
+  const [signup, isLoading] = useRegisterMutation({
+    onSuccess: () => navigate("/login"),
+  });
   const { t } = useTranslation("auth", { keyPrefix: "signup" });
   function handleSignup(data: SignUpData) {
     const filteredData = {
