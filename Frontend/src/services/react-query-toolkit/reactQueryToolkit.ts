@@ -25,7 +25,7 @@ import {
   UseMutation,
   UseQuery,
 } from "./reactQueryToolkitType";
-import { safeAssign } from "./tsHelpers";
+import { OptionalIfVoid, safeAssign } from "./tsHelpers";
 
 export const createApi = /* @__PURE__ */ createApiCallback();
 
@@ -161,7 +161,7 @@ function buildQueryHook<
       onSuccess,
       onError,
     } = externalOptions ?? {};
-    function prefetchQuery(args: QueryArg) {
+    function prefetchQuery(args: OptionalIfVoid<QueryArg>) {
       queryClient.prefetchQuery({
         queryKey: providesQueryKeys(args),
         queryFn: ({ signal }) =>
@@ -247,11 +247,11 @@ async function fetchQueryData<
   ResultType
 >(
   autoCancellation: boolean | undefined,
-  queryArgs: QueryArg,
-  query: (arg: QueryArg) => BaseQueryArg<BaseQuery>,
+  queryArgs: OptionalIfVoid<QueryArg>,
+  query: (arg: OptionalIfVoid<QueryArg>) => BaseQueryArg<BaseQuery>,
   baseQuery: BaseQuery,
   transformResponse:
-    | TransformedResponse<QueryArg, BaseQuery, ResultType>
+    | TransformedResponse<OptionalIfVoid<QueryArg>, BaseQuery, ResultType>
     | ((baseQueryReturnValue: unknown) => unknown),
 
   signal: AbortSignal | undefined
@@ -293,10 +293,10 @@ function buildMutationHook<
     const { mutate, isPending } = useMutation<
       unknown,
       Error,
-      QueryArg,
+      OptionalIfVoid<QueryArg>,
       ResultType
     >({
-      mutationFn: async (queryArgs: QueryArg) => {
+      mutationFn: async (queryArgs: OptionalIfVoid<QueryArg>) => {
         return fetchQueryData(
           false,
           queryArgs,

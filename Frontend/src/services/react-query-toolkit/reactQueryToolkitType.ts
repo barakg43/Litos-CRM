@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DefaultError, Query, UseMutateFunction } from "@tanstack/react-query";
-import { HasRequiredProps, OmitFromUnion, UnwrapPromise } from "./tsHelpers";
+import {
+  HasRequiredProps,
+  OmitFromUnion,
+  OptionalIfVoid,
+  UnwrapPromise,
+} from "./tsHelpers";
 
 export enum DefinitionType {
   query = "query",
@@ -51,11 +56,10 @@ interface EndpointDefinitionWithQuery<
   BaseQuery extends BaseQueryFn,
   ResultType
 > {
-  query(arg: QueryArg): BaseQueryArg<BaseQuery>;
-
+  query(arg: OptionalIfVoid<QueryArg>): BaseQueryArg<BaseQuery>;
   transformResponse?(
     baseQueryReturnValue: BaseQueryResult<BaseQuery>,
-    arg: QueryArg
+    arg: OptionalIfVoid<QueryArg>
   ): ResultType | Promise<ResultType>;
 }
 
@@ -68,7 +72,7 @@ type QueryKeyTypeFrom<D extends EndpointDefinition<any, any, any, any>> =
   D extends EndpointDefinition<any, any, any, infer QK> ? QK : unknown;
 
 export type ResultHandlerFn<QueryArg, ResultType> = (
-  originalArgs: QueryArg,
+  originalArgs: OptionalIfVoid<QueryArg>,
   result: ResultType
 ) => MaybePromise<unknown>;
 
@@ -79,7 +83,7 @@ type ResultHandlers<QueryArg, ResultType, Error> = {
 export type UseMutation<QueryArg, ResultType> = (
   handlers?: ResultHandlers<QueryArg, ResultType, Error>
 ) => readonly [
-  UseMutateFunction<unknown, unknown, QueryArg, unknown>,
+  UseMutateFunction<unknown, unknown, OptionalIfVoid<QueryArg>, unknown>,
   boolean
 ] & {
   /* phantom type */
@@ -148,7 +152,7 @@ interface QueryExtraOptions<TQueryKey extends QueryKey, QueryArg> {
    * })
    * ```
    */
-  providesQueryKeys: (args: QueryArg) => TQueryKey;
+  providesQueryKeys: (args: OptionalIfVoid<QueryArg>) => TQueryKey;
   autoCancellation?: boolean;
   refetchInterval?:
     | number
@@ -158,18 +162,13 @@ interface QueryExtraOptions<TQueryKey extends QueryKey, QueryArg> {
       ) => number | false | undefined);
   enabled?: boolean;
 }
-interface MutationExtraOptions<
-  TQueryKey extends QueryKey,
-  ResultType,
-  QueryArg
-> {
+interface MutationExtraOptions<TQueryKey extends QueryKey, ResultType, QueryArg>
+  extends ResultHandlers<QueryArg, ResultType, Error> {
   type: DefinitionType.mutation;
-  invalidatesKeys?: (args: QueryArg, result: ResultType) => TQueryKey;
-  onSuccess?: (
-    originalArgs: QueryArg,
+  invalidatesKeys?: (
+    args: OptionalIfVoid<QueryArg>,
     result: ResultType
-  ) => MaybePromise<unknown>;
-  onError?: (originalArgs: QueryArg, error: Error) => MaybePromise<unknown>;
+  ) => TQueryKey;
 }
 type EndpointBuilder<
   BaseQuery extends BaseQueryFn,
@@ -362,8 +361,8 @@ export interface QueryOptions<QueryArg, ResultType, Err = Error>
   retry?: boolean | number;
 }
 export type UseQuery<QueryArg, ResultType, TError = string> = (
-  args: QueryArg,
-  options: QueryOptions<QueryArg, ResultType, TError>
+  args: OptionalIfVoid<QueryArg>,
+  options?: QueryOptions<QueryArg, ResultType, TError>
 ) => QueryResult<QueryArg, ResultType, TError>;
 type QueryResult<QueryArg = unknown, TData = unknown, TError = DefaultError> =
   | QueryErrorResult<QueryArg, TData, TError>
@@ -402,5 +401,5 @@ interface QueryObserverBaseResult<ResultType, QueryArg, TError = DefaultError> {
   isLoading: boolean;
   isError: boolean;
   //   status: QueryStatus;
-  prefetchQuery: (args: QueryArg) => void;
+  prefetchQuery: (args: OptionalIfVoid<QueryArg>) => void;
 }
