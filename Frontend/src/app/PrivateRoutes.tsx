@@ -5,12 +5,12 @@ import { useRetrieveUserQuery } from "../services/redux/api/apiAuth";
 import { useAuth } from "../services/redux/slices/authStore";
 
 const PrivateRoutes = () => {
-  const isAlreadyAuthenticated = useAuth((state) => state.isAuthenticated);
   const login = useAuth((state) => state.login);
   const { data: user, isLoading } = useRetrieveUserQuery(undefined, {
     refetchInterval: false,
     retry: false,
   });
+  const isAlreadyAuthenticated = user != undefined;
   useEffect(() => {
     if (user) login(user);
   }, [user]);

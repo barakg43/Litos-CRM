@@ -22,7 +22,6 @@ import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
 function LoginComponent() {
   const loginAction = useAuth((state) => state.login);
-  //   const isAlreadyAuthenticated = useAuth((state) => state.isAuthenticated);
   const navigate = useNavigate();
   const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();
