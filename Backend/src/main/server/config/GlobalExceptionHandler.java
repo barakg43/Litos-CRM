@@ -3,11 +3,13 @@ package main.server.config;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import main.server.config.security.jwt.TokenRefreshException;
 import main.server.exceptions.ResourceNotFoundException;
 import main.server.sql.dto.ErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -61,6 +63,19 @@ public class GlobalExceptionHandler {
 				HttpStatus.INTERNAL_SERVER_ERROR,
 				message)
 				, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(TokenRefreshException.class)
+	public ResponseEntity<?> handleTokenRefreshException(TokenRefreshException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Token Refresh Exception",
+				HttpStatus.FORBIDDEN,
+				exception.getMessage()), HttpStatus.FORBIDDEN);
+	}
+
+	@ExceptionHandler(DisabledException.class)
+	public ResponseEntity<?> handleDisabledUser(DisabledException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "User is disabled", HttpStatus.CONFLICT,
+				exception.getMessage()), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(BadCredentialsException.class)
