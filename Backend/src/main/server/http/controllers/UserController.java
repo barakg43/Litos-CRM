@@ -1,5 +1,6 @@
 package main.server.http.controllers;
 
+import main.server.sql.dto.auth.UserDetailsDTO;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RequestMapping("/api/users")
 @RestController
+@RequestMapping("/api/users")
 public class UserController {
 	private final UserService userService;
 

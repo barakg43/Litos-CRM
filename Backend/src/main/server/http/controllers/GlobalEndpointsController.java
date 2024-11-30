@@ -3,16 +3,16 @@ package main.server.http.controllers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Controller
+@RestController
 public class GlobalEndpointsController {
 	private static final Logger logger = LogManager.getLogger("restartedMain");
 	private final String healthResponse = String.format("{\"boot-time\":\"%s\"}",
