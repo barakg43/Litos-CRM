@@ -9,6 +9,7 @@ import main.server.sql.dto.ErrorDTO;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.dto.auth.TokenRecord;
+import main.server.sql.dto.auth.UserDetailsDTO;
 import main.server.sql.entities.RefreshTokenEntity;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.AuthenticationService;
@@ -69,16 +70,17 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<UserEntity> authenticate(@RequestBody LoginUserRecord loginUserDto) {
+	public ResponseEntity<UserDetailsDTO> authenticate(@RequestBody LoginUserRecord loginUserDto) {
 		UserEntity authenticatedUser = authenticationService.authenticate(loginUserDto);
 
 		String accessToken = new TokenCookie(
 				TokenCookie.eType.ACCESS, jwtService.generateTokenFromUsername(authenticatedUser))
 				.buildRawCookie();
+		String encryptUserId = jwtService.encryptUserIdUsingJwe(authenticatedUser.getId());
 		TokenRecord refreshTokenEntity = refreshTokenService.createRefreshToken(authenticatedUser.getId());
 
 		Instant expiryDate = refreshTokenEntity.expiryDate().toInstant();
-
+		String tokenWithUserID = String.format("%s:%s", encryptUserId, refreshTokenEntity.token());
 		String refreshTokenCookie = TokenCookie.buildCookie(TokenCookie.eType.REFRESH,
 				refreshTokenEntity.token(),
 				expiryDate).toString();
