@@ -85,7 +85,7 @@ public class AuthenticationController {
 		return ResponseEntity.ok()
 				.header(HttpHeaders.SET_COOKIE, accessToken)
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
-				.build();
+				.body(new UserDetailsDTO(authenticatedUser));
 	}
 
 //	@PostMapping("/signout")

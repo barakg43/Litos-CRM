@@ -22,16 +22,12 @@ public class UserController {
 	}
 
 	@GetMapping("/me")
-	public ResponseEntity<UserDetailsDTO> authenticatedUser() {
+	public ResponseEntity<UserDetailsDTO> authenticatedUserDetails() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		UserEntity currentUser = (UserEntity) authentication.getPrincipal();
 
-		return ResponseEntity.ok(new UserDetailsDTO(
-				currentUser.getUsername(),
-				currentUser.getFullName(),
-				currentUser.getEmail(),
-				currentUser.getCreatedAt()));
+		return ResponseEntity.ok(new UserDetailsDTO(currentUser));
 	}
 
 	@GetMapping("/")
