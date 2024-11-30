@@ -21,6 +21,7 @@ public class UserEntity implements UserDetails {
 	private Integer id;
 	@Column(nullable = false, length = 20, unique = true)
 	private String username;
+	@Getter
 	@Column(nullable = false)
 	private String fullName;
 	@Getter
@@ -31,6 +32,8 @@ public class UserEntity implements UserDetails {
 	@Column(nullable = false)
 	private boolean enabled;
 	@CreationTimestamp
+	@Getter
+
 	@Column(updatable = false, columnDefinition = "smalldatetime")
 	private Date createdAt;
 	@UpdateTimestamp
