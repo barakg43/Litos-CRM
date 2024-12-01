@@ -11,7 +11,6 @@ import main.server.ServerConstants;
 import main.server.config.security.SecurityConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +22,13 @@ import java.util.Date;
 @Service
 public class JwtService {
 	private final Logger requestLogger;
-	//	@Value("${security.jwt.expiration-time}")
 	private final long jwtExpirationMs = SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE * 1000;
-
-	@Value("${security.jwt.secret-key}")
-	private String secretKey;
+	private final String secretKey;
 
 	public JwtService() {
 
 		this.requestLogger = LogManager.getLogger(ServerConstants.REQUEST_LOGGER_NAME);
-
+		secretKey = generateKey();
 	}
 
 	//
