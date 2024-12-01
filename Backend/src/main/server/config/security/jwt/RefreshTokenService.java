@@ -1,6 +1,8 @@
 package main.server.config.security.jwt;
 
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.AeadAlgorithm;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import main.server.sql.entities.RefreshTokenEntity;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.RefreshTokenRepository;
 import main.server.sql.repositories.UserRepository;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -21,6 +24,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
@@ -32,17 +36,23 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
 
+	private final SecretKey userSecretKey;
+	private final AeadAlgorithm aeadAlgorithm = Jwts.ENC.A256GCM;
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
-
 	@Autowired
 	private UserRepository userRepository;
-
 	private MessageDigest tokenHarsher;
 
-	public Optional<RefreshTokenEntity> findByToken(String originalToken) {
-		String hashedToken = generateHashedString(originalToken);
-		return refreshTokenRepository.findByToken(hashedToken);
+	public RefreshTokenService() {
+		this.userSecretKey = aeadAlgorithm.key().build();
+	}
+
+	public Optional<RefreshTokenEntity> findByToken(String originalCombinedToken) {
+		Pair<Integer, String> tokenUserIdPair = splitTokenWithUserId(originalCombinedToken);
+		Integer userId = tokenUserIdPair.a;
+		String hashedToken = generateHashedString(tokenUserIdPair.b);
+		return refreshTokenRepository.findByTokenAndUserId(hashedToken, userId);
 	}
 
 	@PostConstruct
@@ -65,13 +75,11 @@ public class RefreshTokenService {
 	}
 
 	public LogoutHandler getLogoutHandler() {
-		System.out.println("config security jwt RefreshTokenService getLogoutHandler()");
 		return (HttpServletRequest request, HttpServletResponse response, Authentication authentication) -> {
 			Optional<ResponseCookie> optionalRefreshCookie = TokenCookie.extractCookieFromRequest(request,
 					TokenCookie.eType.REFRESH);
 			boolean isLogoutAllDevices = request.getParameter("all") != null
 					&& request.getParameter("all").equals("true");
-			System.out.println("token :" + optionalRefreshCookie.map(ResponseCookie::getValue));
 			if (isLogoutAllDevices) {
 				handleLogoutAllDevice(optionalRefreshCookie);
 			} else {
@@ -87,10 +95,7 @@ public class RefreshTokenService {
 			optionalRefreshCookie.map(ResponseCookie::getValue)
 					.map(this::findByToken)
 					.flatMap(optionalToken ->
-					{
-						System.out.println("Deleting refresh token for user: " + optionalToken.get().getUser().getId());
-						return optionalToken.map(RefreshTokenEntity::getUser);
-					})
+							optionalToken.map(RefreshTokenEntity::getUser))
 					.map(this::deleteByUser)
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token not found " +
 							"or" +
