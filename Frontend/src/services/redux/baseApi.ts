@@ -15,9 +15,9 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
   //   let abortController;
   // wait until the mutex is available without locking it
   await mutex.waitForUnlock();
-  //   console.log("before:", api);
   const { signal } = api;
   let result = await axiosBaseQuery(args, signal);
+
   if (result.error && result.error.status === StatusCodes.UNAUTHORIZED) {
     // checking whether the mutex is locked
     if (!mutex.isLocked()) {
