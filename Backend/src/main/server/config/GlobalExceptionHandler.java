@@ -1,11 +1,14 @@
 package main.server.config;
 
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import main.server.config.security.jwt.TokenCookie;
 import main.server.config.security.jwt.TokenRefreshException;
 import main.server.exceptions.ResourceNotFoundException;
 import main.server.sql.dto.ErrorDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -67,9 +70,16 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(TokenRefreshException.class)
 	public ResponseEntity<?> handleTokenRefreshException(TokenRefreshException exception, HttpServletRequest request) {
-		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Token Refresh Exception",
-				HttpStatus.FORBIDDEN,
-				exception.getMessage()), HttpStatus.FORBIDDEN);
+		return ResponseEntity
+				.status(HttpStatus.FORBIDDEN)
+				.header(HttpHeaders.SET_COOKIE,
+						TokenCookie.createCleanResponseCookie(TokenCookie.eType.REFRESH).toString())
+				.header(HttpHeaders.SET_COOKIE,
+						TokenCookie.createCleanResponseCookie(TokenCookie.eType.ACCESS).toString())
+				.body(new ErrorDTO(request.getRequestURI(), "Token Refresh Exception",
+						HttpStatus.FORBIDDEN,
+						exception.getMessage())
+				);
 	}
 
 	@ExceptionHandler(DisabledException.class)
