@@ -5,7 +5,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.AeadAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import main.server.ServerConstants;
@@ -26,15 +25,14 @@ public class JwtService {
 	private final Logger requestLogger;
 	//	@Value("${security.jwt.expiration-time}")
 	private final long jwtExpirationMs = SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE * 1000;
-	private final SecretKey userSecretKey;
-	private final AeadAlgorithm aeadAlgorithm = Jwts.ENC.A256GCM;
+
 	@Value("${security.jwt.secret-key}")
 	private String secretKey;
 
 	public JwtService() {
 
 		this.requestLogger = LogManager.getLogger(ServerConstants.REQUEST_LOGGER_NAME);
-		this.userSecretKey = aeadAlgorithm.key().build();
+
 	}
 
 	//
@@ -128,29 +126,6 @@ public class JwtService {
 				.expiration(new Date((new Date()).getTime() + jwtExpirationMs))
 				.signWith(getSignInKey())
 				.compact();
-	}
-
-	public String encryptUserIdUsingJwe(Integer userID) {
-		System.out.println("key: " + userSecretKey);
-		return Jwts.builder()
-				.content(String.valueOf(userID), "text/plain")
-				.encryptWith(userSecretKey,
-						aeadAlgorithm)
-				.compact();
-	}
-
-	public Integer decryptUserIdUsingJwe(String token) {
-		try {
-
-			return Integer.valueOf(new String(Jwts.parser()
-					.decryptWith(userSecretKey)
-					.build()
-					.parseEncryptedContent(token)
-					.getPayload(),
-					StandardCharsets.UTF_8));
-		} catch (Exception e) {
-			return null;
-		}
 	}
 
 

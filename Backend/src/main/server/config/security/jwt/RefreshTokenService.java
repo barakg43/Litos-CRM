@@ -144,15 +144,38 @@ public class RefreshTokenService {
 		return token;
 	}
 
+	private String encryptUserIdUsingJwe(Integer userID) {
+		return Jwts.builder()
+				.content(String.valueOf(userID), "text/plain")
+				.encryptWith(userSecretKey,
+						aeadAlgorithm)
+				.compact();
+
+	}
+
+	private Integer decryptUserIdUsingJwe(String token) {
+		try {
+
+			return Integer.valueOf(new String(Jwts.parser()
+					.decryptWith(userSecretKey)
+					.build()
+					.parseEncryptedContent(token)
+					.getPayload(),
+					StandardCharsets.UTF_8));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	@Transactional
 	public int deleteByUser(@NotNull UserEntity user) {
 		if (!userRepository.existsById(user.getId()))
 			throw new EntityNotFoundException("User not found");
-		return refreshTokenRepository.deleteByUser(user);
+		return refreshTokenRepository.deleteByUserId(user.getId());
 	}
 
 	public void deleteByToken(@NotNull RefreshTokenEntity token) {
-		System.out.println("Deleting refresh token: " + token.getToken());
 		if (!refreshTokenRepository.existsById(token.getId()))
 			throw new EntityNotFoundException("Refresh token not found");
 		refreshTokenRepository.delete(token);
