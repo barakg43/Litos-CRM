@@ -129,9 +129,22 @@ public class RefreshTokenService {
 		refreshToken.setExpiryDate(expiryDate);
 		String originalToken = generateRandomToken();
 		String hashedToken = generateHashedString(originalToken);
+		String tokenWithEncryptUserID = combineTokenWithUserId(originalToken, userId);
 		refreshToken.setToken(hashedToken);
 		refreshTokenRepository.save(refreshToken);
-		return new TokenRecord(originalToken, expiryDate);
+		return new TokenRecord(tokenWithEncryptUserID, expiryDate);
+	}
+
+	private String combineTokenWithUserId(String token, Integer userId) {
+		String encryptUserId = encryptUserIdUsingJwe(userId);
+		saved_encryptUserId = encryptUserId;
+		return String.format("%s:%s", encryptUserId, token);
+	}
+
+	private Pair<Integer, String> splitTokenWithUserId(String combinedTokenWithUserId) {
+		String[] splitTokenUserid = combinedTokenWithUserId.split(":");
+		Integer userId = decryptUserIdUsingJwe(splitTokenUserid[0]);
+		return new Pair<>(userId, splitTokenUserid[1]);
 	}
 
 	public RefreshTokenEntity verifyExpiration(@NotNull RefreshTokenEntity token) {
