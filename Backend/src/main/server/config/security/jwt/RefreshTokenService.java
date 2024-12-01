@@ -146,6 +146,9 @@ public class RefreshTokenService {
 
 	private Pair<Integer, String> splitTokenWithUserId(String encryptedCombinedTokenWithUserId) {
 		String combinedTokenUserid = decryptTokenWithUserIdUsingJwe(encryptedCombinedTokenWithUserId);
+		if (combinedTokenUserid == null)
+			throw new TokenRefreshException(encryptedCombinedTokenWithUserId, "Refresh token cannot decrypt and not " +
+					"valid!");
 		String[] splitTokenUserid = combinedTokenUserid.split(":");
 		Integer userId = Integer.valueOf(splitTokenUserid[0]);
 		String token = splitTokenUserid[1];
@@ -181,7 +184,7 @@ public class RefreshTokenService {
 					.getPayload(),
 					StandardCharsets.UTF_8);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 	}

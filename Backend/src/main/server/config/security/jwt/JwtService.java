@@ -126,12 +126,16 @@ public class JwtService {
 
 
 	public String getUsernameFromJwtToken(String token) {
-		return Jwts.parser()
-				.verifyWith(getSignInKey())
-				.build()
-				.parseSignedClaims(token)
-				.getPayload()
-				.getSubject();
+		try {
+			return Jwts.parser()
+					.verifyWith(getSignInKey())
+					.build()
+					.parseSignedClaims(token)
+					.getPayload()
+					.getSubject();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 
