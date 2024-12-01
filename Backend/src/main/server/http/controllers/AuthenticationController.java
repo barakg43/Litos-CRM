@@ -76,11 +76,8 @@ public class AuthenticationController {
 		String accessToken = new TokenCookie(
 				TokenCookie.eType.ACCESS, jwtService.generateTokenFromUsername(authenticatedUser))
 				.buildRawCookie();
-		String encryptUserId = jwtService.encryptUserIdUsingJwe(authenticatedUser.getId());
 		TokenRecord refreshTokenEntity = refreshTokenService.createRefreshToken(authenticatedUser.getId());
-
 		Instant expiryDate = refreshTokenEntity.expiryDate().toInstant();
-		String tokenWithUserID = String.format("%s:%s", encryptUserId, refreshTokenEntity.token());
 		String refreshTokenCookie = TokenCookie.buildCookie(TokenCookie.eType.REFRESH,
 				refreshTokenEntity.token(),
 				expiryDate).toString();

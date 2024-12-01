@@ -142,7 +142,6 @@ public class RefreshTokenService {
 
 	private String combineTokenWithUserId(String token, Integer userId) {
 		String encryptUserId = encryptUserIdUsingJwe(userId);
-		saved_encryptUserId = encryptUserId;
 		return String.format("%s:%s", encryptUserId, token);
 	}
 
