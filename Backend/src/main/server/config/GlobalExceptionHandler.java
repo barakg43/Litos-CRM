@@ -84,4 +84,11 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Bad Credentials", HttpStatus.UNAUTHORIZED,
 				exception.getMessage()), HttpStatus.BAD_REQUEST);
 	}
+
+	@ExceptionHandler(SecurityException.class)
+	public ResponseEntity<?> handleSecurityException(SecurityException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Security Exception",
+				HttpStatus.UNAUTHORIZED,
+				exception.getMessage()), HttpStatus.UNAUTHORIZED);
+	}
 }
