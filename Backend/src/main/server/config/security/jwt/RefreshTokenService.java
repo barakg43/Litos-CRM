@@ -141,14 +141,15 @@ public class RefreshTokenService {
 	}
 
 	private String combineTokenWithUserId(String token, Integer userId) {
-		String encryptUserId = encryptUserIdUsingJwe(userId);
-		return String.format("%s:%s", encryptUserId, token);
+		return encryptUserIdUsingJwe(String.format("%s:%s", userId, token));
 	}
 
-	private Pair<Integer, String> splitTokenWithUserId(String combinedTokenWithUserId) {
-		String[] splitTokenUserid = combinedTokenWithUserId.split(":");
-		Integer userId = decryptUserIdUsingJwe(splitTokenUserid[0]);
-		return new Pair<>(userId, splitTokenUserid[1]);
+	private Pair<Integer, String> splitTokenWithUserId(String encryptedCombinedTokenWithUserId) {
+		String combinedTokenUserid = decryptTokenWithUserIdUsingJwe(encryptedCombinedTokenWithUserId);
+		String[] splitTokenUserid = combinedTokenUserid.split(":");
+		Integer userId = Integer.valueOf(splitTokenUserid[0]);
+		String token = splitTokenUserid[1];
+		return new Pair<>(userId, token);
 	}
 
 	public RefreshTokenEntity verifyExpiration(@NotNull RefreshTokenEntity token) {
@@ -161,24 +162,24 @@ public class RefreshTokenService {
 		return token;
 	}
 
-	private String encryptUserIdUsingJwe(Integer userID) {
+	private String encryptUserIdUsingJwe(String tokenWithuserID) {
 		return Jwts.builder()
-				.content(String.valueOf(userID), "text/plain")
+				.content(tokenWithuserID, "text/plain")
 				.encryptWith(userSecretKey,
 						aeadAlgorithm)
 				.compact();
 
 	}
 
-	private Integer decryptUserIdUsingJwe(String token) {
+	private String decryptTokenWithUserIdUsingJwe(String token) {
 		try {
 
-			return Integer.valueOf(new String(Jwts.parser()
+			return new String(Jwts.parser()
 					.decryptWith(userSecretKey)
 					.build()
 					.parseEncryptedContent(token)
 					.getPayload(),
-					StandardCharsets.UTF_8));
+					StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
