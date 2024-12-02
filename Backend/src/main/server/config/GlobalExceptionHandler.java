@@ -11,6 +11,7 @@ import main.server.sql.dto.ErrorDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -100,5 +101,12 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Security Exception",
 				HttpStatus.UNAUTHORIZED,
 				exception.getMessage()), HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Access Denied to this resource",
+				HttpStatus.FORBIDDEN,
+				exception.getMessage()), HttpStatus.FORBIDDEN);
 	}
 }
