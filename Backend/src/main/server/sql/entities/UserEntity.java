@@ -2,6 +2,7 @@ package main.server.sql.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import main.server.user.Role;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +30,9 @@ public class UserEntity implements UserDetails {
 	private String email;
 	@Column(nullable = false)
 	private String password;
+	@Enumerated(EnumType.STRING)
+	private Role role;
+
 	@Column(nullable = false)
 	private boolean enabled;
 	@CreationTimestamp
@@ -46,6 +50,7 @@ public class UserEntity implements UserDetails {
 		this.email = email;
 		this.password = password;
 		this.enabled = true;
+		this.role = Role.USER;
 	}
 
 	public UserEntity() {
