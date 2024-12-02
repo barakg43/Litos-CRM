@@ -3,12 +3,12 @@ package main.server.http.controllers;
 import main.server.sql.dto.auth.UserDetailsDTO;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.UserService;
+import main.server.user.UpdateUserSecurityPropertiesRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +35,12 @@ public class UserController {
 		List<UserEntity> users = userService.allUsers();
 
 		return ResponseEntity.ok(users);
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PostMapping("/update-security-props")
+	public void updateSecurityPropertiesForUser(@RequestBody UpdateUserSecurityPropertiesRequest updateUserSecurityPropertiesRequest) {
+
+		userService.updateUserSecurityProperties(updateUserSecurityPropertiesRequest);
 	}
 }
