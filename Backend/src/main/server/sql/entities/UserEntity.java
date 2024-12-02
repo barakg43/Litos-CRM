@@ -2,6 +2,7 @@ package main.server.sql.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import main.server.user.Role;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,11 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
 import java.util.Collection;
-import java.util.List;
 
 @Table(name = "tbUsers")
 @Entity
 public class UserEntity implements UserDetails {
+
 	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +31,15 @@ public class UserEntity implements UserDetails {
 	private String email;
 	@Column(nullable = false)
 	private String password;
+	@Setter
 	@Enumerated(EnumType.STRING)
 	private Role role;
-
+	@Setter
 	@Column(nullable = false)
 	private boolean enabled;
+
 	@CreationTimestamp
 	@Getter
-
 	@Column(updatable = false, columnDefinition = "smalldatetime")
 	private Date createdAt;
 	@UpdateTimestamp
