@@ -4,6 +4,7 @@ import main.server.sql.dto.auth.UserDetailsDTO;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.UserService;
 import main.server.user.UpdateUserSecurityPropertiesRequest;
+import main.server.user.UserSecurityProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,11 @@ public class UserController {
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/")
-	public ResponseEntity<List<UserEntity>> allUsers() {
-		List<UserEntity> users = userService.allUsers();
-		return ResponseEntity.ok(users);
+	public List<UserSecurityProperties> allUsersSecurityProperties() {
+		return userService.allUsers()
+				.stream()
+				.map(UserSecurityProperties::new)
+				.toList();
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
