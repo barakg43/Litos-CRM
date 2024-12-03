@@ -26,7 +26,7 @@ public class GlobalEndpointsController {
 		return "forward:/index.html";
 	}
 
-	@GetMapping("/api/health")
+	@GetMapping("/health")
 	public ResponseEntity<String> getServerHealth() {
 		return new ResponseEntity<>(healthResponse, null, 200);
 	}
