@@ -4,6 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.UserRepository;
 import main.server.user.UpdateUserSecurityPropertiesRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +18,11 @@ public class UserService {
 
 	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
+	}
+
+	public static UserEntity getCurrentlyAuthenticatedUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return (UserEntity) authentication.getPrincipal();
 	}
 
 	public List<UserEntity> allUsers() {

@@ -6,8 +6,6 @@ import main.server.sql.services.UserService;
 import main.server.user.UpdateUserSecurityPropertiesRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,10 +21,7 @@ public class UserController {
 
 	@GetMapping("/me")
 	public ResponseEntity<UserDetailsDTO> authenticatedUserDetails() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		UserEntity currentUser = (UserEntity) authentication.getPrincipal();
-
+		UserEntity currentUser = UserService.getCurrentlyAuthenticatedUser();
 		return ResponseEntity.ok(new UserDetailsDTO(currentUser));
 	}
 
