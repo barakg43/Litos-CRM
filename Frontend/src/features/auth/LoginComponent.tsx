@@ -16,12 +16,12 @@ import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
 import { useLoginMutation } from "../../services/redux/api/apiAuth";
-import { useAuth } from "../../services/redux/slices/authStore";
+import { useAuthStore } from "../../services/redux/slices/useAuthStore";
 import { LoginCredentials } from "./auth";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
 function LoginComponent() {
-  const loginAction = useAuth((state) => state.login);
+  const loginAction = useAuthStore((state) => state.login);
   const navigate = useNavigate();
   const { register, handleSubmit, formState, reset, watch } =
     useForm<LoginCredentials>();

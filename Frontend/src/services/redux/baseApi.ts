@@ -4,7 +4,7 @@ import { httpClient } from "../axios";
 import { createApi } from "../react-query-toolkit/reactQueryToolkit";
 import { BaseQueryFn } from "../react-query-toolkit/reactQueryToolkitType";
 import { StatusCodes } from "./httpStatusCodes";
-import { useAuth } from "./slices/authStore";
+import { useAuthStore } from "./slices/useAuthStore";
 
 // create a new mutex
 const mutex = new Mutex();
@@ -38,7 +38,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
           refreshResult.error?.status === StatusCodes.FORBIDDEN ||
           refreshResult.error?.status === StatusCodes.BAD_REQUEST
         ) {
-          useAuth.getState().logout();
+          useAuthStore.getState().logout();
           throw result.error;
         }
       } finally {

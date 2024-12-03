@@ -2,10 +2,10 @@ import { Avatar, Flex, IconButton, Text } from "@chakra-ui/react";
 import { TbLogout, TbUserCircle } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../../services/redux/api/apiAuth";
-import { useAuth } from "../../services/redux/slices/authStore";
+import { useAuthStore } from "../../services/redux/slices/useAuthStore";
 
 function UserPanel() {
-  const fullName = useAuth((state) => state.user?.fullName);
+  const fullName = useAuthStore((state) => state.user?.fullName);
   const navigate = useNavigate();
   const [logout] = useLogoutMutation({ onSuccess: () => navigate("/login") });
 
