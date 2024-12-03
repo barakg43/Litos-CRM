@@ -25,10 +25,10 @@ public class UserController {
 		return ResponseEntity.ok(new UserDetailsDTO(currentUser));
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("/")
 	public ResponseEntity<List<UserEntity>> allUsers() {
 		List<UserEntity> users = userService.allUsers();
-
 		return ResponseEntity.ok(users);
 	}
 
