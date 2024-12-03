@@ -1,11 +1,24 @@
 package main.server.sql.dto.auth;
 
+import lombok.Data;
 import main.server.sql.entities.UserEntity;
+import main.server.user.Role;
 
 import java.util.Date;
 
-public record UserDetailsDTO(String username, String fullName, String email, Date createAt) {
+@Data
+public class UserDetailsDTO {
+	String username;
+	String fullName;
+	String email;
+	Date createdAt;
+	Role role;
+
 	public UserDetailsDTO(UserEntity userEntity) {
-		this(userEntity.getUsername(), userEntity.getFullName(), userEntity.getEmail(), userEntity.getCreatedAt());
+		this.username = userEntity.getUsername();
+		this.fullName = userEntity.getFullName();
+		this.email = userEntity.getEmail();
+		this.createdAt = userEntity.getCreatedAt();
+		this.role = userEntity.getRole();
 	}
 }
