@@ -11,4 +11,6 @@ export type UserDetails = {
   username: string;
   email: string;
   createAt: Date;
+  role: Role;
 };
+export type Role = "ADMIN" | "USER";
