@@ -1,26 +1,33 @@
-import { create, StoreApi, UseBoundStore } from "zustand";
+import { createSelectorFunctions } from "auto-zustand-selectors-hook";
+import { create } from "zustand";
 import { queryClient } from "../../../app/AppProviders";
 import { UserDetails } from "../../../features/auth/auth";
-type AuthState = {
+
+type State = {
   user: UserDetails | null;
+};
+const initialState: State = {
+  user: null,
+};
+type Actions = {
   login: (user: UserDetails) => void;
   logout: () => void;
   isAdmin: () => boolean;
 };
-export const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create(
-  (set, get) => ({
-    user: null,
-    login: (user: UserDetails) => {
-      set({ user });
-    },
-    logout: () => {
-      set({ user: null });
-      queryClient.removeQueries({
-        predicate: (query) => query.queryKey[0] !== "User",
-      });
-    },
-    isAdmin: () => {
-      return get().user?.role === "ADMIN";
-    },
-  })
-);
+const useAuthStoreBase = create<State & Actions>()((set, get) => ({
+  ...initialState,
+  login: (user: UserDetails) => {
+    if (get().user) return; // fix rerenders bug that login submit multiple times
+    set({ user });
+  },
+  logout: () => {
+    set(initialState);
+    queryClient.removeQueries({
+      predicate: (query) => query.queryKey[0] !== "User",
+    });
+  },
+  isAdmin: () => {
+    return get().user?.role === "ADMIN";
+  },
+}));
+export const useAuthStore = createSelectorFunctions(useAuthStoreBase);
