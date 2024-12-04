@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DefaultError, Query, UseMutateFunction } from "@tanstack/react-query";
+import { Query, UseMutateFunction } from "@tanstack/react-query";
 import {
   HasRequiredProps,
   OmitFromUnion,
@@ -62,7 +62,11 @@ interface EndpointDefinitionWithQuery<
     arg: OptionalIfVoid<QueryArg>
   ): ResultType | Promise<ResultType>;
 }
-
+export type ErrorFromBaseQuery<
+  BaseQuery extends BaseQueryFn<any, any, any, any>
+> = BaseQuery extends BaseQueryFn<any, any, any, infer ErrorType>
+  ? ErrorType
+  : unknown;
 type QueryArgFrom<D extends BaseEndpointDefinition<any, any, any>> =
   D extends BaseEndpointDefinition<infer QA, any, any> ? QA : unknown;
 type ResultTypeFrom<D extends BaseEndpointDefinition<any, any, any>> =
@@ -76,12 +80,12 @@ export type ResultHandlerFn<QueryArg, ResultType> = (
   result: ResultType
 ) => MaybePromise<unknown>;
 
-type ResultHandlers<QueryArg, ResultType, Error> = {
+type ResultHandlers<QueryArg, ResultType, TError> = {
   onSuccess?: ResultHandlerFn<QueryArg, ResultType>;
-  onError?: ResultHandlerFn<QueryArg, Error>;
+  onError?: ResultHandlerFn<QueryArg, TError>;
 };
-export type UseMutation<QueryArg, ResultType> = (
-  handlers?: ResultHandlers<QueryArg, ResultType, Error>
+export type UseMutation<QueryArg, ResultType, TError> = (
+  handlers?: ResultHandlers<QueryArg, ResultType, TError>
 ) => readonly [
   UseMutateFunction<unknown, unknown, OptionalIfVoid<QueryArg>, unknown>,
   boolean
@@ -93,12 +97,13 @@ export type UseMutation<QueryArg, ResultType> = (
 export type BaseQueryFn<
   Args = any,
   Result = unknown,
-  DefinitionExtraOptions = Record<string, never> | unknown
+  DefinitionExtraOptions = Record<string, never> | unknown,
+  TError = any
 > = (
   args: Args,
   api: BaseQueryApi,
   extraOptions: DefinitionExtraOptions
-) => MaybePromise<Result>;
+) => MaybePromise<Result | TError>;
 
 type MaybePromise<T> = T | Promise<T> | (T extends any ? Promise<T> : never);
 export type BaseQueryArg<T extends (arg: any, ...args: any[]) => any> =
@@ -162,8 +167,12 @@ interface QueryExtraOptions<TQueryKey extends QueryKey, QueryArg> {
       ) => number | false | undefined);
   enabled?: boolean;
 }
-interface MutationExtraOptions<TQueryKey extends QueryKey, ResultType, QueryArg>
-  extends ResultHandlers<QueryArg, ResultType, Error> {
+interface MutationExtraOptions<
+  TQueryKey extends QueryKey,
+  ResultType,
+  QueryArg,
+  TError = unknown
+> extends ResultHandlers<QueryArg, ResultType, TError> {
   type: DefinitionType.mutation;
   invalidatesKeys?: (
     args: OptionalIfVoid<QueryArg>,
@@ -277,7 +286,7 @@ export type Api<
      */
     overrideExisting?: boolean | "throw";
   }): Api<BaseQueryFn, TQueryKey, EndpointDefinitions> &
-    HooksWithUniqueNames<NewDefinitions>;
+    HooksWithUniqueNames<NewDefinitions, ErrorFromBaseQuery<BaseQuery>>;
   /**
    *A function to enhance a generated API with additional information. Useful with code-generation.
    */
@@ -321,8 +330,10 @@ export type BuildMutationHook<
   definition: MutationDefinition<QueryArg, BaseQuery, ResultType, TQueryKey>;
 };
 
-export type HooksWithUniqueNames<Definitions extends EndpointDefinitions> =
-  QueryHookNames<Definitions> & MutationHookNames<Definitions>;
+export type HooksWithUniqueNames<
+  Definitions extends EndpointDefinitions,
+  TError
+> = QueryHookNames<Definitions> & MutationHookNames<Definitions, TError>;
 
 export type QueryHookName<K> = `use${Capitalize<K & string>}Query`;
 export type MutationHookName<K> = `use${Capitalize<K & string>}Mutation`;
@@ -337,7 +348,7 @@ type QueryHookNames<Definitions extends EndpointDefinitions> = {
   >;
 };
 
-type MutationHookNames<Definitions extends EndpointDefinitions> = {
+type MutationHookNames<Definitions extends EndpointDefinitions, TError> = {
   [K in keyof Definitions as Definitions[K] extends {
     type: DefinitionType.mutation;
   }
@@ -348,12 +359,13 @@ type MutationHookNames<Definitions extends EndpointDefinitions> = {
     >,
     ResultTypeFrom<
       Extract<Definitions[K], MutationDefinition<any, any, any, any>>
-    >
+    >,
+    TError
   >;
 };
 
-export interface QueryOptions<QueryArg, ResultType, Err = Error>
-  extends ResultHandlers<QueryArg, ResultType, Err> {
+export interface QueryOptions<QueryArg, ResultType, TError>
+  extends ResultHandlers<QueryArg, ResultType, TError> {
   autoCancellation?: boolean;
   refetchInterval?: number | false | false | undefined;
   enabled?: boolean;
@@ -364,12 +376,12 @@ export type UseQuery<QueryArg, ResultType, TError = string> = (
   args: OptionalIfVoid<QueryArg>,
   options?: QueryOptions<QueryArg, ResultType, TError>
 ) => QueryResult<QueryArg, ResultType, TError>;
-type QueryResult<QueryArg = unknown, TData = unknown, TError = DefaultError> =
+type QueryResult<QueryArg = unknown, TData = unknown, TError = unknown> =
   | QueryErrorResult<QueryArg, TData, TError>
   | QuerySuccessResult<QueryArg, TData, TError>
   | QueryLoadingResult<QueryArg, TData, TError>;
 
-interface QueryLoadingResult<QueryArg, ResultType, TError = DefaultError>
+interface QueryLoadingResult<QueryArg, ResultType, TError>
   extends QueryObserverBaseResult<ResultType, QueryArg, TError> {
   data: undefined;
   error: null | undefined;
@@ -377,7 +389,7 @@ interface QueryLoadingResult<QueryArg, ResultType, TError = DefaultError>
   isLoading: true;
   //   status: "pending";
 }
-interface QuerySuccessResult<QueryArg, ResultType, TError = DefaultError>
+interface QuerySuccessResult<QueryArg, ResultType, TError>
   extends QueryObserverBaseResult<ResultType, QueryArg, TError> {
   data: ResultType;
   error: undefined;
@@ -386,7 +398,7 @@ interface QuerySuccessResult<QueryArg, ResultType, TError = DefaultError>
   //   status: "success";
 }
 
-interface QueryErrorResult<QueryArg, ResultType, TError = DefaultError>
+interface QueryErrorResult<QueryArg, ResultType, TError>
   extends QueryObserverBaseResult<ResultType, QueryArg, TError> {
   data: undefined;
   error: TError;
@@ -395,7 +407,7 @@ interface QueryErrorResult<QueryArg, ResultType, TError = DefaultError>
   //   status: "error";
 }
 
-interface QueryObserverBaseResult<ResultType, QueryArg, TError = DefaultError> {
+interface QueryObserverBaseResult<ResultType, QueryArg, TError> {
   data: ResultType | undefined;
   error: TError | null | undefined;
   isLoading: boolean;
