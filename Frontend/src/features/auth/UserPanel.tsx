@@ -6,8 +6,14 @@ import { useAuthStore } from "../../services/redux/slices/useAuthStore";
 
 function UserPanel() {
   const fullName = useAuthStore((state) => state.user?.fullName);
+  const logoutHandler = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
-  const [logout] = useLogoutMutation({ onSuccess: () => navigate("/login") });
+  const [logout] = useLogoutMutation({
+    onSuccess: () => {
+      logoutHandler();
+      navigate("/login");
+    },
+  });
 
   return (
     <Flex alignItems='center' gap={2}>
