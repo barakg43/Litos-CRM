@@ -10,6 +10,7 @@ import {
   TbUsers,
 } from "react-icons/tb";
 import { NavLink as ReactRouterLink } from "react-router-dom";
+import { useAuthStore } from "../services/redux/slices/useAuthStore";
 import BadgeIcon from "./BadgeIcon";
 
 type NavLinkItemProps = {
@@ -51,6 +52,8 @@ function NavLinkItem({ path, label, icon }: NavLinkItemProps) {
 }
 function MainNav() {
   const { t } = useTranslation("appLayout", { keyPrefix: "sidebar" });
+  const isAdmin = useAuthStore((state) => state.isAdmin());
+
   return (
     <List
       listStyleType='none'
@@ -71,11 +74,13 @@ function MainNav() {
         path='/product-renews'
         label={t("product-renews")}
       />
-      <NavLinkItem
-        icon={<BadgeIcon icon={<TbAlarmPlus />} />}
-        path='/service-renews'
-        label={t("service-renews")}
-      />
+      {isAdmin && (
+        <NavLinkItem
+          icon={<BadgeIcon icon={<TbAlarmPlus />} />}
+          path='/service-renews'
+          label={t("service-renews")}
+        />
+      )}
 
       <NavLinkItem
         icon={<TbClipboardList />}
@@ -87,6 +92,9 @@ function MainNav() {
         path='/reports'
         label={t("reports")}
       />
+      {isAdmin && (
+        <NavLinkItem icon={<TbUsers />} path='/users' label={t("users")} />
+      )}
       <NavLinkItem
         icon={<TbSettings />}
         path='/settings'
