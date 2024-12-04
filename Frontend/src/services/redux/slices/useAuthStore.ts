@@ -5,9 +5,10 @@ type AuthState = {
   user: UserDetails | null;
   login: (user: UserDetails) => void;
   logout: () => void;
+  isAdmin: () => boolean;
 };
 export const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create(
-  (set) => ({
+  (set, get) => ({
     user: null,
     login: (user: UserDetails) => {
       set({ user });
@@ -17,6 +18,9 @@ export const useAuthStore: UseBoundStore<StoreApi<AuthState>> = create(
       queryClient.removeQueries({
         predicate: (query) => query.queryKey[0] !== "User",
       });
+    },
+    isAdmin: () => {
+      return get().user?.role === "ADMIN";
     },
   })
 );
