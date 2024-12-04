@@ -150,7 +150,9 @@ function LoginComponent() {
               fontSize='1.3rem'
               colorScheme='teal'
               isLoading={isLoading}
-              isDisabled={!formState.isValid || isLoading || !isAllFieldsFilled}
+              isDisabled={
+                formState.isSubmitting || isLoading || !isAllFieldsFilled
+              }
               width={"20rem"}
             >
               {t("login")}
