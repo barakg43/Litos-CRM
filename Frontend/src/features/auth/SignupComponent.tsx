@@ -11,6 +11,7 @@ import { useRegisterMutation } from "../../services/redux/api/apiAuth";
 import { SignUpData } from "./auth";
 
 import { useNavigate } from "react-router-dom";
+import { useToaster } from "../../hooks/useToaster";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 const SignupSchema: ZodType<SignUpData> = z
   .object({
@@ -37,10 +38,20 @@ function SignupComponent() {
     useForm<SignUpData>({ resolver: zodResolver(SignupSchema) });
   const navigate = useNavigate();
   const { errors } = formState;
-  const [signup, isLoading] = useRegisterMutation({
-    onSuccess: () => navigate("/login"),
-  });
+  const toast = useToaster();
   const { t } = useTranslation("auth", { keyPrefix: "signup" });
+
+  const [signup, isLoading] = useRegisterMutation({
+    onSuccess: () => {
+      toast({
+        title: t("success-title"),
+        description: t("success-message"),
+        status: "info",
+        duration: 10000,
+      });
+      navigate("/login");
+    },
+  });
   function handleSignup(data: SignUpData) {
     const filteredData = {
       password: data.password,
