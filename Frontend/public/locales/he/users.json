@@ -4,7 +4,8 @@
     "fullName": "שם מלא",
     "role": "תפקיד",
     "enabled": "מופעל",
-    "createdAt": "תאריך רישום",
+    "createdAt": "תאריך הרשמה",
     "save-button": "שמירה"
-  }
+  },
+  "roles": { "ADMIN": "מנהל מערכת", "USER": "משתמש רגיל" }
 }
