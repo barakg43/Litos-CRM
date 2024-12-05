@@ -6,6 +6,7 @@ import ServiceRenewsHistoryTable from "./service-renews/ServiceRenewsHistoryTabl
 function ChildTabs() {
   const { t } = useTranslation("customers", { keyPrefix: "child" });
   const [tabIndex, setTabIndex] = useState(0);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
   const handleTabsChange = (index: number) => {
     setTabIndex(index);
   };

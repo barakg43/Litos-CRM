@@ -34,8 +34,9 @@ const SignupSchema: ZodType<SignUpData> = z
 
 function SignupComponent() {
   const [showPassword, setShowPassword] = useState(false);
-  const { register, handleSubmit, formState, reset, watch } =
-    useForm<SignUpData>({ resolver: zodResolver(SignupSchema) });
+  const { register, handleSubmit, formState } = useForm<SignUpData>({
+    resolver: zodResolver(SignupSchema),
+  });
   const navigate = useNavigate();
   const { errors } = formState;
   const toast = useToaster();
