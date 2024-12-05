@@ -27,7 +27,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
-	@GetMapping("/")
+	@GetMapping("")
 	public List<UserSecurityProperties> allUsersSecurityProperties() {
 		return userService.allUsers()
 				.stream()
@@ -36,7 +36,7 @@ public class UserController {
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
-	@PostMapping("/update-security-props")
+	@PatchMapping("/update-security-props")
 	public void updateSecurityPropertiesForUser(@RequestBody UpdateUserSecurityPropertiesRequest updateUserSecurityPropertiesRequest) {
 
 		userService.updateUserSecurityProperties(updateUserSecurityPropertiesRequest);
