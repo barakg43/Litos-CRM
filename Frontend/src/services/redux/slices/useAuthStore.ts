@@ -26,8 +26,6 @@ const useAuthStoreBase = create<State & Actions>()((set, get) => ({
       predicate: (query) => query.queryKey[0] !== "User",
     });
   },
-  isAdmin: () => {
-    return get().user?.role === "ADMIN";
-  },
+  isAdmin: () => get().user?.role === "ADMIN",
 }));
 export const useAuthStore = createSelectorFunctions(useAuthStoreBase);
