@@ -7,6 +7,7 @@ import {
   Link,
   Stack,
 } from "@chakra-ui/react";
+import { HttpStatusCode } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -16,14 +17,15 @@ import ExtendFormRow from "../../components/ExtendFormRow";
 import Logo from "../../components/Logo";
 import LanguageSelector from "../../i18n/LanguageSelector";
 import { useLoginMutation } from "../../services/redux/api/apiAuth";
-import { useAuth } from "../../services/redux/slices/authStore";
+import { ErrorDetails } from "../../services/redux/baseApi";
+import { useAuthStore } from "../../services/redux/slices/useAuthStore";
 import { LoginCredentials } from "./auth";
 import ShowPasswordToggleButton from "./ShowPasswordToggleButton";
 
 function LoginComponent() {
-  const loginAction = useAuth((state) => state.login);
+  const loginAction = useAuthStore.use.login();
   const navigate = useNavigate();
-  const { register, handleSubmit, formState, reset, watch } =
+  const { register, handleSubmit, formState, reset, watch, setError } =
     useForm<LoginCredentials>();
   const [showPassword, setShowPassword] = useState(false);
   const { errors } = formState;
@@ -34,6 +36,17 @@ function LoginComponent() {
     onSuccess: (_, user) => {
       loginAction(user);
       navigate("/");
+    },
+    onError: (_, error) => {
+      const errorType = error as ErrorDetails;
+      console.log("errorType", errorType);
+
+      if (errorType.status === HttpStatusCode.Unauthorized) {
+        setError("password", { message: t("wrongCredentials") });
+      }
+      if (errorType.status === HttpStatusCode.Conflict) {
+        setError("username", { message: t("userBlocked") });
+      }
     },
   });
   function handleLogin(credentials: LoginCredentials) {
@@ -137,7 +150,9 @@ function LoginComponent() {
               fontSize='1.3rem'
               colorScheme='teal'
               isLoading={isLoading}
-              isDisabled={!formState.isValid || isLoading || !isAllFieldsFilled}
+              isDisabled={
+                formState.isSubmitting || isLoading || !isAllFieldsFilled
+              }
               width={"20rem"}
             >
               {t("login")}

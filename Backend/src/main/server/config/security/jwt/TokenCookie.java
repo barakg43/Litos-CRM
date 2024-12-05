@@ -83,6 +83,17 @@ public class TokenCookie {
 		return cookie;
 	}
 
+	public static ResponseCookie createCleanResponseCookie(eType type) {
+		return ResponseCookie
+				.from(type.getName(), "")
+				.httpOnly(SecurityConstants.AUTH_COOKIE_HTTP_ONLY)
+				.secure(SecurityConstants.AUTH_COOKIE_SECURE)
+				.path(type.getPath())
+				.maxAge(0)
+				.sameSite(SecurityConstants.AUTH_COOKIE_SAMESITE)
+				.build();
+	}
+
 	public ResponseCookie buildCookie() {
 		return buildCookie(type.getName(), type.getPath(), this.token, type.getAge());
 	}

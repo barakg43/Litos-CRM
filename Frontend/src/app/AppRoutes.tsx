@@ -9,6 +9,7 @@ import Reports from "../pages/Reports";
 import ServiceRenews from "../pages/ServiceRenews.tsx";
 import Settings from "../pages/Settings";
 import SignUp from "../pages/Signup";
+import Users from "../pages/Users.tsx";
 import Login from "./../pages/Login.tsx";
 import AppLayout from "./AppLayout.tsx";
 import PrivateRoutes from "./PrivateRoutes.tsx";
@@ -25,6 +26,7 @@ function AppRoutes() {
           <Route path='/customers' element={<Customers />} />
           <Route path='/customers/:customerId' element={<Customer />} />
           <Route path='/reports' element={<Reports />} />
+          <Route path='/users' element={<Users />} />
           <Route path='/settings' element={<Settings />} />
           <Route path='/account' element={<Account />} />
         </Route>

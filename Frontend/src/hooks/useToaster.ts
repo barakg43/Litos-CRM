@@ -6,12 +6,14 @@ export function useToaster() {
     title,
     description,
     status,
+    duration,
   }: {
     title: string;
     description: string;
     status: "info" | "warning" | "success" | "error" | "loading" | undefined;
+    duration?: number;
   }) {
-    toast({ title, description, status, duration: 5000 });
+    toast({ title, description, status, duration: duration || 5000 });
   }
 
   return toaster;

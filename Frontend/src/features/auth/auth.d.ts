@@ -6,9 +6,3 @@ export type SignUpData = {
   confirmPassword: string;
   email: string;
 };
-export type UserDetails = {
-  fullName: string;
-  username: string;
-  email: string;
-  createAt: Date;
-};

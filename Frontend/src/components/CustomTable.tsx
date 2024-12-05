@@ -9,6 +9,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { TFunction } from "i18next";
 import { MouseEventHandler, ReactNode, createContext, useContext } from "react";
 import Empty from "./Empty";
 import LoadingSpinner from "./LoadingSpinner";
@@ -148,8 +149,26 @@ function Header({ children }: { children: ReactNode }) {
     </Thead>
   );
 }
+function TranslateLabelsHeader({
+  t,
+  labels,
+}: {
+  t: TFunction<string, string>;
+  labels: string[];
+}) {
+  return (
+    <CustomTable.Header>
+      {labels.map((label) => (
+        <CustomTable.Header.Cell
+          label={t(label)}
+          key={label}
+          sx={{ width: "15rem" }}
+        />
+      ))}
+    </CustomTable.Header>
+  );
+}
 
-// `;
 type RowType = {
   children: ReactNode;
   onClick?: MouseEventHandler<HTMLDivElement> | undefined;
@@ -181,4 +200,5 @@ CustomTable.Header = Header;
 CustomTable.Row = Row;
 CustomTable.Footer = Footer;
 CustomTable.Body = Body;
+CustomTable.TranslateLabelsHeader = TranslateLabelsHeader;
 export default CustomTable;

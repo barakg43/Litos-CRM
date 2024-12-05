@@ -5,9 +5,11 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import main.server.sql.dto.reminder.ePeriodKind;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Set;
@@ -80,5 +82,18 @@ public class UtilityFunctions {
 		else
 			page = Pageable.unpaged();
 		return page;
+	}
+
+	public static String printPWD() {
+		String currentPath = null;
+		String massage = null;
+		try {
+			currentPath = new java.io.File(".").getCanonicalPath();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		massage = "Current dir:" + currentPath;
+		LogManager.getLogger("restartedMain").info(massage);
+		return massage;
 	}
 }

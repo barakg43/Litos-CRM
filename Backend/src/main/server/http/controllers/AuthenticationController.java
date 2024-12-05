@@ -9,6 +9,7 @@ import main.server.sql.dto.ErrorDTO;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.dto.auth.TokenRecord;
+import main.server.sql.dto.auth.UserDetailsDTO;
 import main.server.sql.entities.RefreshTokenEntity;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.AuthenticationService;
@@ -17,7 +18,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Instant;
 import java.util.Optional;
 
-@RequestMapping("/api/auth")
 @RestController
-@Controller
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 	private final JwtService jwtService;
 	private final AuthenticationService authenticationService;
@@ -71,23 +70,21 @@ public class AuthenticationController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<UserEntity> authenticate(@RequestBody LoginUserRecord loginUserDto) {
+	public ResponseEntity<UserDetailsDTO> authenticate(@RequestBody LoginUserRecord loginUserDto) {
 		UserEntity authenticatedUser = authenticationService.authenticate(loginUserDto);
 
 		String accessToken = new TokenCookie(
 				TokenCookie.eType.ACCESS, jwtService.generateTokenFromUsername(authenticatedUser))
 				.buildRawCookie();
 		TokenRecord refreshTokenEntity = refreshTokenService.createRefreshToken(authenticatedUser.getId());
-
 		Instant expiryDate = refreshTokenEntity.expiryDate().toInstant();
-
 		String refreshTokenCookie = TokenCookie.buildCookie(TokenCookie.eType.REFRESH,
 				refreshTokenEntity.token(),
 				expiryDate).toString();
 		return ResponseEntity.ok()
 				.header(HttpHeaders.SET_COOKIE, accessToken)
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
-				.build();
+				.body(new UserDetailsDTO(authenticatedUser));
 	}
 
 //	@PostMapping("/signout")

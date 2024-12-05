@@ -17,6 +17,7 @@ import {
   DefinitionType,
   EndpointDefinition,
   EndpointDefinitions,
+  ErrorFromBaseQuery,
   HooksWithUniqueNames,
   MutationHookName,
   QueryDefinition,
@@ -50,7 +51,10 @@ function createApiCallback(): CreateApi {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mutation: (x) => ({ ...x, type: DefinitionType.mutation } as any),
       });
-      const endpointsHook: HooksWithUniqueNames<EndpointDefinitions> = {};
+      const endpointsHook: HooksWithUniqueNames<
+        EndpointDefinitions,
+        ErrorFromBaseQuery<BaseQuery>
+      > = {};
       for (const [endpointName, definition] of Object.entries(
         evaluatedEndpoints
       )) {
@@ -106,7 +110,9 @@ function buildHook<
   baseQuery: BaseQuery;
 }): {
   hookName: QueryHookName<string> | MutationHookName<string>;
-  hookFn: UseQuery<QueryArg, ResultType> | UseMutation<QueryArg, ResultType>;
+  hookFn:
+    | UseQuery<QueryArg, ResultType>
+    | UseMutation<QueryArg, ResultType, ErrorFromBaseQuery<BaseQuery>>;
 } {
   let hookFn = undefined;
   if (isQueryDefinition(definition)) {
@@ -119,7 +125,13 @@ function buildHook<
     const hookName = `use${capitalize(
       endpointName
     )}Mutation` as MutationHookName<string>;
-    hookFn = buildMutationHook<QueryArg, BaseQuery, ResultType, TQueryKey>({
+    hookFn = buildMutationHook<
+      QueryArg,
+      BaseQuery,
+      ResultType,
+      TQueryKey,
+      ErrorFromBaseQuery<BaseQuery>
+    >({
       endpointName,
       baseQuery,
       definition,
@@ -271,14 +283,16 @@ function buildMutationHook<
   QueryArg,
   BaseQuery extends BaseQueryFn,
   ResultType,
-  TQueryKey extends QueryKey
+  TQueryKey extends QueryKey,
+  TError extends ErrorFromBaseQuery<BaseQuery>
 >({
   endpointName,
   baseQuery,
   definition,
 }: BuildMutationHook<QueryArg, BaseQuery, ResultType, TQueryKey>): UseMutation<
   QueryArg,
-  ResultType
+  ResultType,
+  TError
 > {
   return function useMutationHook({ onSuccess, onError } = {}) {
     const {
@@ -292,7 +306,7 @@ function buildMutationHook<
 
     const { mutate, isPending } = useMutation<
       unknown,
-      Error,
+      TError,
       OptionalIfVoid<QueryArg>,
       ResultType
     >({

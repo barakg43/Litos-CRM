@@ -1,4 +1,5 @@
-import { LoginCredentials, UserDetails } from "../../../features/auth/auth";
+import { LoginCredentials } from "../../../features/auth/auth";
+import { UserDetails } from "../../../features/users/users";
 import { baseApi } from "../baseApi";
 
 const authApiSlice = baseApi.injectEndpoints({

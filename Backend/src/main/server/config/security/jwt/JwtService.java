@@ -11,7 +11,6 @@ import main.server.ServerConstants;
 import main.server.config.security.SecurityConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -23,19 +22,19 @@ import java.util.Date;
 @Service
 public class JwtService {
 	private final Logger requestLogger;
-	//	@Value("${security.jwt.expiration-time}")
 	private final long jwtExpirationMs = SecurityConstants.AUTH_COOKIE_ACCESS_MAX_AGE * 1000;
-	@Value("${security.jwt.secret-key}")
-	private String secretKey;
+	private final String secretKey;
 
 	public JwtService() {
+
 		this.requestLogger = LogManager.getLogger(ServerConstants.REQUEST_LOGGER_NAME);
+		secretKey = generateKey();
 	}
 
 	//
 //	private String buildToken(
 //			Map<String, Object> extraClaims,
-//			UserDetails userDetails,
+//			UserDetailsDTO userDetails,
 //			long expiration
 //	) {
 //		return Jwts
@@ -48,7 +47,7 @@ public class JwtService {
 //				.compact();
 //	}
 //
-//	public boolean isTokenValid(String token, UserDetails userDetails) {
+//	public boolean isTokenValid(String token, UserDetailsDTO userDetails) {
 //		final String username = extractUsername(token);
 //		return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
 //	}
@@ -78,6 +77,7 @@ public class JwtService {
 		SecretKey key = Jwts.SIG.HS256.key().build();
 		// Encode the key to a Base64 string for easier handling
 		return Base64.getEncoder().encodeToString(key.getEncoded());
+
 	}
 
 	//	public String extractUsername(String token) {
@@ -89,11 +89,11 @@ public class JwtService {
 //		return claimsResolver.apply(claims);
 //	}
 //
-//	public String generateToken(UserDetails userDetails) {
+//	public String generateToken(UserDetailsDTO userDetails) {
 //		return generateToken(new HashMap<>(), userDetails);
 //	}
 //
-//	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+//	public String generateToken(Map<String, Object> extraClaims, UserDetailsDTO userDetails) {
 //		return buildToken(extraClaims, userDetails, jwtExpiration);
 //	}
 //
@@ -102,8 +102,7 @@ public class JwtService {
 	}
 
 	private SecretKey getSignInKey() {
-		SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-		return key;
+		return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 	}
 
 	public String getJwtFromHeader(HttpServletRequest request) {
@@ -125,13 +124,18 @@ public class JwtService {
 				.compact();
 	}
 
+
 	public String getUsernameFromJwtToken(String token) {
-		return Jwts.parser()
-				.verifyWith(getSignInKey())
-				.build()
-				.parseSignedClaims(token)
-				.getPayload()
-				.getSubject();
+		try {
+			return Jwts.parser()
+					.verifyWith(getSignInKey())
+					.build()
+					.parseSignedClaims(token)
+					.getPayload()
+					.getSubject();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 

@@ -1,15 +1,24 @@
+import { QueryKey } from "@tanstack/react-query";
 import { Mutex } from "async-mutex";
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { httpClient } from "../axios";
 import { createApi } from "../react-query-toolkit/reactQueryToolkit";
-import { BaseQueryFn } from "../react-query-toolkit/reactQueryToolkitType";
+import {
+  BaseQueryFn,
+  EndpointDefinitions,
+} from "../react-query-toolkit/reactQueryToolkitType";
 import { StatusCodes } from "./httpStatusCodes";
-import { useAuth } from "./slices/authStore";
+import { useAuthStore } from "./slices/useAuthStore";
 
 // create a new mutex
 const mutex = new Mutex();
 
-export type AxiosBaseQuery = BaseQueryFn<AxiosBaseQueryProps>;
+export type AxiosBaseQuery = BaseQueryFn<
+  AxiosBaseQueryProps,
+  unknown,
+  unknown,
+  ErrorDetails
+>;
 
 export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
   //   let abortController;
@@ -38,7 +47,7 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
           refreshResult.error?.status === StatusCodes.FORBIDDEN ||
           refreshResult.error?.status === StatusCodes.BAD_REQUEST
         ) {
-          useAuth.getState().logout();
+          useAuthStore.getState().logout();
           throw result.error;
         }
       } finally {
@@ -66,7 +75,7 @@ type AxiosParamProps = {
 };
 export type AxiosBaseQueryProps = AxiosParamProps | string;
 
-type ErrorDetails = {
+export type ErrorDetails = {
   title: string;
   message: string;
   path: string;

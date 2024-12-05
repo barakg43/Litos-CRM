@@ -1,18 +1,20 @@
 package main.server.http.controllers;
 
+import main.server.sql.dto.auth.UserDetailsDTO;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.services.UserService;
+import main.server.user.UpdateUserSecurityPropertiesRequest;
+import main.server.user.UserSecurityProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@RequestMapping("/api/users")
 @RestController
+@RequestMapping("/api/users")
 public class UserController {
 	private final UserService userService;
 
@@ -21,18 +23,27 @@ public class UserController {
 	}
 
 	@GetMapping("/me")
-	public ResponseEntity<UserEntity> authenticatedUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		UserEntity currentUser = (UserEntity) authentication.getPrincipal();
-
-		return ResponseEntity.ok(currentUser);
+	public ResponseEntity<UserDetailsDTO> authenticatedUserDetails() {
+		UserEntity currentUser = UserService.getCurrentlyAuthenticatedUser();
+		return ResponseEntity.ok(new UserDetailsDTO(currentUser));
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<List<UserEntity>> allUsers() {
-		List<UserEntity> users = userService.allUsers();
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@GetMapping("")
+	public List<UserSecurityProperties> allUsersSecurityProperties() {
+		return userService.allUsers()
+				.stream()
+				.map(UserSecurityProperties::new)
+				.toList();
+	}
 
-		return ResponseEntity.ok(users);
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@PatchMapping("/update-security-props")
+	public void updateSecurityPropertiesForUser(@RequestBody UpdateUserSecurityPropertiesRequest updateUserSecurityPropertiesRequest) {
+		UserEntity user = UserService.getCurrentlyAuthenticatedUser();
+		if (user.getUsername().equals(updateUserSecurityPropertiesRequest.getUsername())) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "You cannot update your own security properties");
+		}
+		userService.updateUserSecurityProperties(updateUserSecurityPropertiesRequest);
 	}
 }

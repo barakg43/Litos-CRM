@@ -46,9 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				filterChain.doFilter(request, response);
 				return;
 			}
+			
 			final String jwt = accessCookie.map(ResponseCookie::getValue)
 					.orElseThrow(() ->
-							new RuntimeException("No JWT in cookie"));
+							new SecurityException("No JWT in cookie"));
 			final String username = jwtService.getUsernameFromJwtToken(jwt);
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

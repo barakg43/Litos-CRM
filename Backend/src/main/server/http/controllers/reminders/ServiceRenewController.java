@@ -7,14 +7,13 @@ import main.server.sql.dto.reminder.ContractRecord;
 import main.server.sql.services.ContractService;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import static main.server.ServerConstants.SERVER_CROSS_ORIGIN;
-
-@CrossOrigin(origins = SERVER_CROSS_ORIGIN)
 @RestController
 @RequestMapping("/api/contract-service")
+@PreAuthorize("hasAnyRole('ADMIN')")
 public class ServiceRenewController {
 	private final HttpRequestExecutor httpRequestExecutor;
 	private final ContractService contractService;

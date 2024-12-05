@@ -2,6 +2,8 @@ package main.server.sql.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+import main.server.user.Role;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,11 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Date;
 import java.util.Collection;
-import java.util.List;
 
 @Table(name = "tbUsers")
 @Entity
 public class UserEntity implements UserDetails {
+
 	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +23,7 @@ public class UserEntity implements UserDetails {
 	private Integer id;
 	@Column(nullable = false, length = 20, unique = true)
 	private String username;
+	@Getter
 	@Column(nullable = false)
 	private String fullName;
 	@Getter
@@ -28,9 +31,16 @@ public class UserEntity implements UserDetails {
 	private String email;
 	@Column(nullable = false)
 	private String password;
+	@Setter
+	@Getter
+	@Enumerated(EnumType.STRING)
+	private Role role;
+	@Setter
 	@Column(nullable = false)
 	private boolean enabled;
+
 	@CreationTimestamp
+	@Getter
 	@Column(updatable = false, columnDefinition = "smalldatetime")
 	private Date createdAt;
 	@UpdateTimestamp
@@ -43,6 +53,7 @@ public class UserEntity implements UserDetails {
 		this.email = email;
 		this.password = password;
 		this.enabled = true;
+		this.role = Role.USER;
 	}
 
 	public UserEntity() {
@@ -51,7 +62,7 @@ public class UserEntity implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of();
+		return role.getAuthorities();
 	}
 
 	@Override

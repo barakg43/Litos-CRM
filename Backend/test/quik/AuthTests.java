@@ -1,7 +1,10 @@
 package quik;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
+import main.server.config.security.SecurityConstants;
 import main.server.http.controllers.AuthenticationController;
+import main.server.http.controllers.CustomerController;
 import main.server.sql.dto.auth.LoginUserRecord;
 import main.server.sql.dto.auth.RegisterUserDto;
 import main.server.sql.entities.UserEntity;
@@ -19,6 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,6 +44,9 @@ public class AuthTests {
 	AuthenticationController authenticationController;
 	@Autowired
 	UserRepository userRepository;
+
+	@Autowired
+	CustomerController customerController;
 	MockMvc mockMvc;
 	ObjectMapper objectMapper;
 	UserEntity userEntityToTest;
@@ -50,16 +59,18 @@ public class AuthTests {
 	@BeforeEach
 	public void setup() {
 		objectMapper = new ObjectMapper();
-		this.mockMvc = MockMvcBuilders.standaloneSetup(authenticationController)
+		this.mockMvc = MockMvcBuilders.standaloneSetup(authenticationController, customerController)
 				.setHandlerExceptionResolvers(handlerExceptionResolver)
 				.setMessageConverters(new MappingJackson2HttpMessageConverter())
 				.build();
+		mockMvc.getDispatcherServlet().setCleanupAfterInclude(true);
 	}
 
 	@Test
 	@BeforeEach
 	public void authContextLoad() {
 		assertThat(authenticationController).isNotNull();
+		assertThat(customerController).isNotNull();
 	}
 
 	@BeforeEach
@@ -71,6 +82,7 @@ public class AuthTests {
 	@AfterEach
 	void deleteUser() {
 		userRepository.delete(userEntityToTest);
+
 	}
 
 	@Test
@@ -132,12 +144,44 @@ public class AuthTests {
 	}
 
 	@Test
-	void signin_unuauthorizedAcessProtectedResource_shouldUnauthorized() throws Exception {
-		mockMvc.perform(get("/api/customers/")
-						.content(objectMapper.writeValueAsString(new LoginUserRecord("wrong", USER_PASSWORD)))
+	void refreshtoken_shouldReturnOk() throws Exception {
+		List<Cookie> cookies = new ArrayList<>();
+		mockMvc.perform(post("/api/auth/login")
+						.content(objectMapper.writeValueAsString(new LoginUserRecord(userEntityToTest.getUsername(),
+								USER_PASSWORD)))
 						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andDo(result -> cookies.addAll(List.of(result.getResponse().getCookies())));
+
+		mockMvc.perform(post("/api/auth/refresh-token")
+						.contentType(MediaType.APPLICATION_JSON)
+						.cookie(cookies.get(1)))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void signin_unauthorizedAccessProtectedResource_shouldUnauthorized() throws Exception {
+
+		mockMvc.perform(get("/api/customers")
+						.content(objectMapper.writeValueAsString(new LoginUserRecord("wrong", USER_PASSWORD)))
+						.contentType(MediaType.APPLICATION_JSON)
+						.cookie(new Cookie(SecurityConstants.AUTH_ACCESS_KEY, null)))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.title").value(Matchers.containsString("Bad Credentials")));
 	}
 
+	@Test
+	void signin_accessProtectedResource_shouldOk() throws Exception {
+
+		mockMvc.perform(post("/api/auth/login")
+						.content(objectMapper.writeValueAsString(new LoginUserRecord(userEntityToTest.getUsername(),
+								USER_PASSWORD)))
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+
+		mockMvc.perform(get("/api/customers")
+						.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
 }

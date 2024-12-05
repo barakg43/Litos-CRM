@@ -1,13 +1,19 @@
 package main.server.config;
 
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import main.server.config.security.jwt.TokenCookie;
+import main.server.config.security.jwt.TokenRefreshException;
 import main.server.exceptions.ResourceNotFoundException;
 import main.server.sql.dto.ErrorDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -63,10 +69,44 @@ public class GlobalExceptionHandler {
 				, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@ExceptionHandler(TokenRefreshException.class)
+	public ResponseEntity<?> handleTokenRefreshException(TokenRefreshException exception, HttpServletRequest request) {
+		return ResponseEntity
+				.status(HttpStatus.FORBIDDEN)
+				.header(HttpHeaders.SET_COOKIE,
+						TokenCookie.createCleanResponseCookie(TokenCookie.eType.REFRESH).toString())
+				.header(HttpHeaders.SET_COOKIE,
+						TokenCookie.createCleanResponseCookie(TokenCookie.eType.ACCESS).toString())
+				.body(new ErrorDTO(request.getRequestURI(), "Token Refresh Exception",
+						HttpStatus.FORBIDDEN,
+						exception.getMessage())
+				);
+	}
+
+	@ExceptionHandler(DisabledException.class)
+	public ResponseEntity<?> handleDisabledUser(DisabledException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "User is disabled", HttpStatus.CONFLICT,
+				exception.getMessage()), HttpStatus.BAD_REQUEST);
+	}
+
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException exception,
 														   HttpServletRequest request) {
 		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Bad Credentials", HttpStatus.UNAUTHORIZED,
 				exception.getMessage()), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(SecurityException.class)
+	public ResponseEntity<?> handleSecurityException(SecurityException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Security Exception",
+				HttpStatus.UNAUTHORIZED,
+				exception.getMessage()), HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
+		return new ResponseEntity<>(new ErrorDTO(request.getRequestURI(), "Access Denied to this resource",
+				HttpStatus.FORBIDDEN,
+				exception.getMessage()), HttpStatus.FORBIDDEN);
 	}
 }

@@ -8,6 +8,7 @@ import main.server.sql.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -21,11 +22,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import java.util.List;
+import java.util.Arrays;
 
 @Configuration
 @EnableMethodSecurity
@@ -56,10 +58,12 @@ public class SecurityConfig {
 	@Bean
 	UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-
-		configuration.setAllowedOrigins(List.of(SecurityConstants.CORS_ALLOWED_ORIGINS));
-		configuration.setAllowedMethods(List.of("POST", "GET", "DELETE", "PUT"));
-		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+		configuration.setAllowedOrigins(Arrays.asList(SecurityConstants.CORS_ALLOWED_ORIGINS));
+		configuration.setAllowedMethods(Arrays.asList("POST", "GET", "DELETE", "PUT", "OPTIONS", "PATCH"));
+		configuration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
+				"Accept", "Authorization", "Origin, Accept", "X-Requested-With",
+				"Access-Control-Request-Method", "Access-Control-Request-Headers"));
+		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 
@@ -91,13 +95,11 @@ public class SecurityConfig {
 				.logout(logout -> logout
 						.logoutUrl("/api/auth/signout")
 						.addLogoutHandler(refreshTokenService.getLogoutHandler())
-						.logoutSuccessUrl("/")
+						.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
 				)
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.formLogin(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable);
-//				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-
 		http.authenticationProvider(authenticationProvider());
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();

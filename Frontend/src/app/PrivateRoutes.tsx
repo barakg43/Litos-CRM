@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useRetrieveUserQuery } from "../services/redux/api/apiAuth";
-import { useAuth } from "../services/redux/slices/authStore";
+import { useAuthStore } from "../services/redux/slices/useAuthStore";
 
 const PrivateRoutes = () => {
-  const login = useAuth((state) => state.login);
+  const login = useAuthStore((state) => state.login);
   const { data: user, isLoading } = useRetrieveUserQuery(undefined, {
     refetchInterval: false,
     retry: false,

@@ -7,12 +7,10 @@ import main.server.sql.dto.customer.CustomerSlimDetailsRecord;
 import main.server.sql.services.CustomerService;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 //@CrossOrigin(origins = SERVER_CROSS_ORIGIN)
-@Controller
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
