@@ -1,9 +1,12 @@
-import { UserSecurityUpdateRequest } from "../../../features/users/users";
+import {
+  UserSecurity,
+  UserSecurityUpdateRequest,
+} from "../../../features/users/users";
 import { baseApi } from "../baseApi";
 
 const usersApiSlice = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    usersList: builder.query({
+    usersList: builder.query<UserSecurity[], void>({
       query: () => "/users",
       providesQueryKeys: () => ["Users"],
     }),
@@ -18,4 +21,5 @@ const usersApiSlice = baseApi.injectEndpoints({
   }),
 });
 
-const { useUsersListQuery, useUpdateUserSecurityPropsMutation } = usersApiSlice;
+export const { useUsersListQuery, useUpdateUserSecurityPropsMutation } =
+  usersApiSlice;
