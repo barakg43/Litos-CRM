@@ -12,7 +12,7 @@ import SignUp from "../pages/Signup";
 import Login from "./../pages/Login.tsx";
 import AppLayout from "./AppLayout.tsx";
 import PrivateRoutes from "./PrivateRoutes.tsx";
-``;
+
 function AppRoutes() {
   return (
     <Routes>
