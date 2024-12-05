@@ -1,14 +1,17 @@
+import { roles } from "./UserTable";
+
 export type UserDetails = {
   fullName: string;
   username: string;
   email: string;
-  createAt: Date;
+  createdAt: Date;
   role: Role;
 };
-export type Role = "ADMIN" | "USER";
+
+export type Role = (typeof roles)[number];
 
 export interface UserSecurity
-  extends Pick<UserDetails, "username" | "createAt" | "role" | "fullName"> {
+  extends Pick<UserDetails, "username" | "createdAt" | "role" | "fullName"> {
   enabled: boolean;
 }
 
