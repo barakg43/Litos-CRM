@@ -8,6 +8,7 @@ import {
   TbReportAnalytics,
   TbSettings,
   TbUsers,
+  TbUsersGroup,
 } from "react-icons/tb";
 import { NavLink as ReactRouterLink } from "react-router-dom";
 import { useAuthStore } from "../services/redux/slices/useAuthStore";
@@ -93,7 +94,7 @@ function MainNav() {
         label={t("reports")}
       />
       {isAdmin && (
-        <NavLinkItem icon={<TbUsers />} path='/users' label={t("users")} />
+        <NavLinkItem icon={<TbUsersGroup />} path='/users' label={t("users")} />
       )}
       <NavLinkItem
         icon={<TbSettings />}
