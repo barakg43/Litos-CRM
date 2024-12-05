@@ -1,5 +1,5 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import UserPanel from "../features/auth/UserPanel";
+import UserPanel from "../features/users/UserPanel";
 import LanguageSelector from "../i18n/LanguageSelector";
 import SearchBar from "./SearchBar";
 
