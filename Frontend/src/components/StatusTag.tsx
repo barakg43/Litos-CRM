@@ -12,7 +12,7 @@ const statusToColor: { [index: string]: string } = {
   none: "white",
 };
 
-function StatusTag({ status }: { status: CustomerStatus }) {
+function StatusTag({ status }: { status: CustomerStatus | "none" }) {
   const { t } = useTranslation("customers", { keyPrefix: "status" });
 
   const statusString = status || "none";
