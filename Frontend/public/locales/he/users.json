@@ -1,0 +1,10 @@
+{
+  "table": {
+    "username": "שם משתמש",
+    "fullName": "שם מלא",
+    "role": "תפקיד",
+    "enabled": "מופעל",
+    "createdAt": "תאריך רישום",
+    "save-button": "שמירה"
+  }
+}
