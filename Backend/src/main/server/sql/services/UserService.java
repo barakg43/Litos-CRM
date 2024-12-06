@@ -21,8 +21,12 @@ public class UserService {
 	}
 
 	public static UserEntity getCurrentlyAuthenticatedUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (UserEntity) authentication.getPrincipal();
+		UserEntity user = null;
+		Object userRaw;
+		userRaw = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (userRaw instanceof UserEntity)
+			user = (UserEntity) userRaw;
+		return user;
 	}
 
 	public List<UserEntity> allUsers() {
