@@ -1,3 +1,4 @@
+import { customerStatuses } from "./CustomersTable";
 export type CustomerFullDataType = {
   customerID: number;
   activeContractID: number;
@@ -17,15 +18,13 @@ export type CustomerFullDataType = {
   contactPersonPost: string;
   contactPersonMobilePhone: string;
 };
+
 export type CustomersListType = {
   customers: CustomerSlimDetailsProps[];
   totalItems: number;
 };
-export type CustomerStatus = (typeof customerStatuses)[number] | null;
-export type CustomerSlimDetailsProps = {
-  customerID: number;
-  customerShortName: string;
-  address: string;
-  city: string;
-  customerStatus: CustomerStatus;
-};
+export type CustomerStatus = (typeof customerStatuses)[number] | undefined;
+export type CustomerSlimDetailsProps = Pick<
+  CustomerFullDataType,
+  "customerID" | "customerShortName" | "address" | "city" | "customerStatus"
+>;

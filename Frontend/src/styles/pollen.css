@@ -2,6 +2,9 @@
   * THIS IS AN AUTO-GENERATED FILE
   * Edit Pollen config to update
   */
+/* * {
+  outline: 1px solid #f00 !important;
+} */
 :root {
   --scale-0: 1rem;
   --scale-1: 1.125rem;

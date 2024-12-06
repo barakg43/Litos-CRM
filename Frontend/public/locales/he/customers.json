@@ -4,7 +4,8 @@
     "customerName": "שם הלקוח",
     "address": "כתובת",
     "city": "עיר",
-    "status": "סטטוס"
+    "status": "סטטוס",
+    "title": "לקוחות"
   },
   "status": {
     "IN_SERVICE": "שירות",
@@ -15,7 +16,7 @@
     "CHARGE": "חיוב"
   },
   "details": {
-    "activeContractID": "number",
+    "activeContractID": "מספר חוזה",
     "customerID": "מספר לקוח",
     "customerShortName": "שם מקוצר",
     "customerStatus": "סטטוס לקוח",
@@ -32,5 +33,38 @@
     "contactPersonMobilePhone": "נייד איש קשר",
     "contactPersonPhone": "טלפון איש קשר",
     "contactPersonPost": "תפקיד"
+  },
+
+  "delete": {
+    "confirmation": "האם אתה בטוח שברצונך למחוק את הלקוח?",
+    "toast-title": "מחיקת לקוח",
+    "toast-message-success": "הלקוח נמחק בהצלחה",
+    "toast-message-error": "אירעה שגיאה במחיקת הלקוח"
+  },
+  "add": {
+    "button": "הוספת לקוח",
+    "save-button": "שמירה",
+    "title": "הוספת לקוח חדש",
+    "toast-title": "הוספת לקוח",
+    "toast-message-success": "הלקוח נוסף בהצלחה",
+    "toast-message-error": "אירעה שגיאה בהוספת לקוח"
+  },
+  "update": {
+    "title": "עדכון פרטי לקוח",
+    "button": "עדכן",
+    "edit": "ערוך",
+    "toast-title": "עדכון חידוש מוצרים",
+    "toast-message-success": "הלקוח עודכן בהצלחה",
+    "toast-message-error": "אירעה שגיאה בעדכון הלקוח"
+  },
+  "child": {
+    "activities": "פעילויות",
+    "service-contracts": "חוזי שירות",
+    "product-renews": "חידושי מוצרים"
+  },
+  "cancel-button": "בטל",
+  "form": {
+    "too-big-text": "השדה מוגבל ל {{length}} תווים",
+    "required": "שדה זה נדרש"
   }
 }

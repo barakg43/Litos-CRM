@@ -1,10 +1,10 @@
+import { Flex } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import CustomTable from "../../components/CustomTable";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import Pagination from "../../components/Pagination";
+import CustomerFormModal from "../customer/CustomerFormModal";
 import CustomerRow from "./CustomerRow";
 import { useCustomers } from "./hooks/useCustomers";
-import Pagination from "../../components/Pagination";
-import { TableHeaderCell } from "../../components/TableHeaderCell";
 // eslint-disable-next-line react-refresh/only-export-components
 export const customerStatuses = [
   "IN_SERVICE",
@@ -19,19 +19,27 @@ function CustomersTable() {
   const { customers, isLoading, totalItems } = useCustomers();
   const { t } = useTranslation("customers", { keyPrefix: "table" });
   return (
-    <CustomTable columns={"1fr ".repeat(5)}>
-      <CustomTable.Header>
-        <TableHeaderCell label={t("customerId")} />
-        <TableHeaderCell label={t("customerName")} />
-        <TableHeaderCell label={t("address")} />
-        <TableHeaderCell label={t("city")} />
-        <TableHeaderCell label={t("status")} />
-      </CustomTable.Header>
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
+    <>
+      <Flex
+        alignContent='center'
+        justifyContent='flex-end'
+        paddingBottom='10px'
+        w='95%'
+      >
+        <CustomerFormModal />
+      </Flex>
+      <CustomTable columns={"1fr ".repeat(5)}>
+        <CustomTable.Header>
+          <CustomTable.Header.Cell label={t("customerId")} />
+          <CustomTable.Header.Cell label={t("customerName")} />
+          <CustomTable.Header.Cell label={t("address")} />
+          <CustomTable.Header.Cell label={t("city")} />
+          <CustomTable.Header.Cell label={t("status")} />
+        </CustomTable.Header>
+
         <CustomTable.Body
           data={customers}
+          resourceName={t("title")}
           isLoading={isLoading}
           render={(customer) => (
             <CustomerRow
@@ -44,11 +52,12 @@ function CustomersTable() {
             />
           )}
         />
-      )}
-      <CustomTable.Footer>
-        <Pagination totalItemsAmount={totalItems} />
-      </CustomTable.Footer>
-    </CustomTable>
+
+        <CustomTable.Footer>
+          <Pagination as='td' totalItemsAmount={totalItems} />
+        </CustomTable.Footer>
+      </CustomTable>
+    </>
   );
 }
 

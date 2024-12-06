@@ -1,5 +1,5 @@
 {
-  "empty": "{{resource}} לא קיים מידע על",
+  "empty": "לא קיימים נתונים על {{resource}} ",
   "pagination": {
     "button": {
       "next": "הבא",
@@ -12,5 +12,14 @@
       "results": "תוצאות"
     }
   },
-  "buttons": { "edit": "ערוך", "delete": "מחק" }
+  "buttons": {
+    "edit": "ערוך",
+    "delete": "מחק",
+    "add": "הוסף",
+    "cancel": "בטל",
+    "save": "שמור",
+    "update": "עדכן"
+  },
+  "delete-alert": "ה האם אתה בטוח שאתה רוצה למחוק את{{resourceName}}?\nפעולה זו לא ניתנת לביטול",
+  "no-access-permission": "אין לך הרשאות לצפות בדף זה"
 }

@@ -1,40 +1,232 @@
-import { FormControl, FormLabel, Input, Textarea } from "@chakra-ui/react";
+import {
+  Checkbox,
+  ComponentWithAs,
+  defineStyle,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputGroupProps,
+  InputLeftElement,
+  InputLeftElementProps,
+  InputRightElement,
+  InputRightElementProps,
+  SystemStyleObject,
+  Textarea,
+} from "@chakra-ui/react";
 import { HTMLInputTypeAttribute } from "react";
-import { UseFormRegisterReturn } from "react-hook-form";
-type FromRowProps = {
+import {
+  FieldError,
+  FieldPath,
+  FieldValues,
+  UseFormRegisterReturn,
+} from "react-hook-form";
+import { isRtlLang } from "../i18n/i18n";
+
+export type FromRowProps<T extends FieldValues> = {
   label: string;
   type?: HTMLInputTypeAttribute | undefined;
-  register?: UseFormRegisterReturn<string> | undefined;
+  register: UseFormRegisterReturn<FieldPath<T>>;
   isRequired?: boolean;
+  error?: FieldError;
   defaultValue?: string | number | readonly string[] | undefined;
+  sx?: SystemStyleObject | undefined;
+  rightInnerProps?: InputRightElementProps;
+  leftInnerProps?: InputLeftElementProps;
+  inputGroupProps?: InputGroupProps;
+  inputStyle?: SystemStyleObject | undefined;
+  autoComplete?: string;
+  withoutLabel?: boolean;
+  variant?: "outline" | "filled" | "flushed" | "unstyled";
 };
-function FormRow({
+export type InputLeftElementType = ComponentWithAs<
+  "div",
+  InputLeftElementProps
+>;
+export type InputRightElementType = ComponentWithAs<
+  "div",
+  InputRightElementProps
+>;
+function FormRow<T extends FieldValues>({
   label,
-  defaultValue,
-  type = "text",
-  register,
+  error,
   isRequired = false,
-}: FromRowProps) {
+  sx,
+  withoutLabel = false,
+  ...inputProps
+}: FromRowProps<T>) {
   return (
-    <FormControl isRequired={isRequired} display='flex' alignItems='center'>
-      <FormLabel width='12rem'>{label}</FormLabel>
-      {type === "textarea" ? (
-        <Textarea
-          placeholder={label}
-          variant='flushed'
-          defaultValue={defaultValue || ""}
-          {...register}
-        />
-      ) : (
-        <Input
-          type={type}
-          defaultValue={defaultValue || ""}
-          placeholder={label}
-          variant='flushed'
-          {...register}
-        />
+    <FormControl
+      isRequired={isRequired}
+      display='flex'
+      alignItems='center'
+      justifyContent={"center"}
+      alignContent={"center"}
+      isInvalid={error !== undefined}
+      sx={sx}
+    >
+      {!withoutLabel && (
+        <FormLabel width='12rem' fontSize='1.25rem' fontWeight={600}>
+          {label}
+        </FormLabel>
       )}
+
+      <Flex flexDirection='column' alignItems='start'>
+        {ReactComponentInput({
+          label,
+          ...inputProps,
+        })}
+        {error && <FormErrorMessage>{error.message}</FormErrorMessage>}
+      </Flex>
     </FormControl>
   );
 }
+type ChakraInputType<T extends FieldValues> = Pick<
+  FromRowProps<T>,
+  | "label"
+  | "type"
+  | "defaultValue"
+  | "register"
+  | "rightInnerProps"
+  | "leftInnerProps"
+  | "inputGroupProps"
+  | "variant"
+  | "inputStyle"
+  | "autoComplete"
+>;
+function ReactComponentInput<T extends FieldValues>({
+  type = "text",
+  label,
+  defaultValue = "",
+  register,
+  rightInnerProps,
+  leftInnerProps,
+  inputGroupProps,
+  autoComplete,
+  inputStyle,
+  variant = "flushed",
+}: ChakraInputType<T>) {
+  const rtlLeftInnerInputProps = isRtlLang() ? rightInnerProps : leftInnerProps;
+  const rtlRightInnerInputProps = isRtlLang()
+    ? leftInnerProps
+    : rightInnerProps;
+
+  switch (type) {
+    case "checkbox":
+      return (
+        <Checkbox
+          placeholder={label}
+          variant='flushed'
+          defaultValue={defaultValue}
+          fontSize='1.1rem'
+          {...register}
+        />
+      );
+    case "textarea":
+      return (
+        <InputWithOptionalElement
+          inputElement={
+            <Textarea
+              placeholder={label}
+              variant={variant}
+              defaultValue={defaultValue}
+              fontSize='1.1rem'
+              sx={inputStyle}
+              autoComplete={autoComplete}
+              {...register}
+            />
+          }
+          inputGroupProps={inputGroupProps}
+          leftInnerProps={rtlLeftInnerInputProps}
+          rightInnerProps={rtlRightInnerInputProps}
+        />
+      );
+
+    //       <InputGroup {...inputGroupProps}>
+    //         {rtlLeftInnerInputProps && (
+    //           <InputLeftElement {...rtlLeftInnerInputProps} />
+    //         )}
+
+    //         {rtlRightInnerInputProps && (
+    //           <InputRightElement {...rtlRightInnerInputProps} />
+    //         )}
+    //       </InputGroup>
+    //     );
+    //   } else
+    //     return (
+    //       <Textarea
+    //         placeholder={label}
+    //         variant={variant}
+    //         defaultValue={defaultValue}
+    //         fontSize='1.1rem'
+    //         {...register}
+    //       />
+    //     );
+    default:
+      return (
+        <InputWithOptionalElement
+          inputElement={
+            <Input
+              type={type}
+              defaultValue={defaultValue}
+              placeholder={label}
+              variant={variant}
+              fontSize='1.1rem'
+              sx={inputStyle}
+              autoComplete={autoComplete}
+              {...register}
+            />
+          }
+          inputGroupProps={inputGroupProps}
+          leftInnerProps={rtlLeftInnerInputProps}
+          rightInnerProps={rtlRightInnerInputProps}
+        />
+      );
+  }
+}
+interface InputWithOptionalElementProps<T extends FieldValues>
+  extends Pick<
+    ChakraInputType<T>,
+    "inputGroupProps" | "leftInnerProps" | "rightInnerProps"
+  > {
+  inputElement: React.ReactNode;
+}
+function InputWithOptionalElement<T extends FieldValues>({
+  inputElement,
+  inputGroupProps,
+  leftInnerProps,
+  rightInnerProps,
+}: InputWithOptionalElementProps<T>) {
+  if (rightInnerProps || leftInnerProps) {
+    return (
+      <InputGroup {...inputGroupProps}>
+        {leftInnerProps && <InputLeftElement {...leftInnerProps} />}
+        {inputElement}
+        {rightInnerProps && <InputRightElement {...rightInnerProps} />}
+      </InputGroup>
+    );
+  } else return inputElement;
+}
+const floatingStyles = defineStyle({
+  pos: "absolute",
+  bg: "bg",
+  px: "0.5",
+  top: "-3",
+  insetStart: "2",
+  fontWeight: "normal",
+  //   pointerEvents: "none",
+  transition: "position",
+  _peerPlaceholderShown: {
+    color: "fg.muted",
+    top: "2.5",
+    insetStart: "3",
+  },
+  _peerFocusVisible: {
+    color: "fg",
+    top: "-3",
+    insetStart: "2",
+  },
+});
 export default FormRow;

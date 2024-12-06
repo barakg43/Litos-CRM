@@ -42,6 +42,7 @@ public class SqlClient {
 	public void createSqlConnection() {
 		sqlClientLogger.debug(String.format("Opening sql yaml file configuration at [%s]",
 				sqlConfigurationYamlFilePath));
+
 		try {
 			sqlConnectionManger.initializeSqlConnectionConfig();
 			sqlClientLogger.info("Opening connection to sql server: " + sqlConnectionManger.getServerConfigDetails());

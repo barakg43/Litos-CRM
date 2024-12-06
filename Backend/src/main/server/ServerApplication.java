@@ -18,7 +18,11 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static main.server.uilities.UtilityFunctions.printPWD;
+
 @SpringBootApplication
+
+
 //@EntityScan(basePackages = "main.server.sql.entities")
 @EnableJpaRepositories(basePackages = "main.server.sql.repositories")
 //@ComponentScan(basePackages = "main.server.sql.entities")
@@ -26,7 +30,9 @@ public class ServerApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 
 		SpringApplication.run(ServerApplication.class, args);
+		printPWD();
 	}
+
 
 	private static void testSqlBuilder() {
 		SqlQueryBuilder sqlQueryBuilder = new SqlQueryBuilder();

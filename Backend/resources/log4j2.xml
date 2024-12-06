@@ -15,22 +15,16 @@
         </Property>
     </Properties>
     <Appenders>
-        <File name="sqlClientFileAppender" fileName="logs/quik1/sql-client.log" append="false">
+        <File name="sqlClientFileAppender" fileName="logs/quik/sql-client.log" append="false">
             <PatternLayout>
                 <Pattern>%d{${LOG_DATEFORMAT_PATTERN}} {${LOG_LEVEL_PATTERN}} --- [%10.10t]:
                     %msg%n${sys:LOG_EXCEPTION_CONVERSION_WORD}
                 </Pattern>
             </PatternLayout>
         </File>
-        <File name="jdbcDriverFileAppender" fileName="logs/quik1/jdbc-driver.log" append="false">
-            <PatternLayout>
-                <Pattern>%d{${LOG_DATEFORMAT_PATTERN}} {${LOG_LEVEL_PATTERN}} --- [%10.10t]:
-                    %msg%n${sys:LOG_EXCEPTION_CONVERSION_WORD}
-                </Pattern>
-            </PatternLayout>
-        </File>
+
         <RollingFile name="LOGFILE-DAILY"
-                     filePattern="logs/quik1/spring-log_%d{yyyy-MM-dd}.log">
+                     filePattern="logs/quik/spring-log_%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="${FILE_LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1"/>
@@ -42,24 +36,18 @@
                 <Pattern>%d{${LOG_DATEFORMAT_PATTERN}} %clr{${LOG_LEVEL_PATTERN}} --- [%15.15t]: %msg%n</Pattern>
             </PatternLayout>
         </Console>
-        <File name="requestsFileAppender" fileName="logs/quik1/requests.log" append="false">
+        <File name="requestsFileAppender" fileName="logs/quik/requests.log" append="false">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %p: %msg%n</Pattern>
             </PatternLayout>
         </File>
 
-        <!--        <Console name="Console" target="SYSTEM_OUT">-->
-        <!--            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5p #%x(%X{UNIQUE-IDENTIFIER}) %logger - %msg%n"/>-->
-        <!--        </Console>-->
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
         </Console>
     </Appenders>
 
     <Loggers>
-        <!--        <Logger name="org.springframework.jdbc.core" level="trace" additivity="false">-->
-        <!--            <appender-ref ref="jdbcDriverFileAppender" />-->
-        <!--        </Logger>-->
         <logger name="sql-client-logger" level="INFO" additivity="false">
             <AppenderRef ref="sqlClientFileAppender"/>
             <AppenderRef ref="customConsoleAppender"/>
@@ -69,6 +57,7 @@
             <AppenderRef ref="requestsFileAppender"/>
             <AppenderRef ref="customConsoleAppender"/>
         </logger>
+        
 
         <Root level="INFO">
             <AppenderRef ref="Console"/>

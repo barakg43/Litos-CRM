@@ -1,6 +1,6 @@
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
 import Backend from "i18next-http-backend";
+import { initReactI18next } from "react-i18next";
 
 // don't want to use this?
 // have a look at the Quick start guide
@@ -19,8 +19,18 @@ i18n
       loadPath: "locales/{{lng}}/{{ns}}.json",
     },
     fallbackLng: "he",
-    debug: true,
-
+    debug: false,
+    load: "currentOnly",
+    preload: ["he", "en"],
+    defaultNS: "he",
+    ns: [
+      "appLayout",
+      "components",
+      "customers",
+      "pageNotFound",
+      "productRenews",
+      "serviceRenews",
+    ],
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
@@ -30,3 +40,7 @@ i18n
   });
 
 export default i18n;
+
+export function isRtlLang() {
+  return document.dir === "rtl";
+}

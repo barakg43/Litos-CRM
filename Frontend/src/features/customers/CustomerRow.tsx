@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import Table from "../../components/CustomTable";
 import StatusTag from "../../components/StatusTag";
 import { CustomerSlimDetailsProps } from "./customers";
-import { Td } from "@chakra-ui/react";
 
 function CustomerRow({
   customerID,
@@ -14,25 +13,19 @@ function CustomerRow({
   const navigate = useNavigate();
 
   return (
-    <Table.Row onClick={() => navigate(`${customerID}`)} height='5.6rem'>
-      <CustomerCell text={customerID} />
-      <CustomerCell text={customerShortName} />
-      <CustomerCell text={address} />
-      <CustomerCell text={city} />
-      <StatusTag status={customerStatus} />
+    <Table.Row
+      onClick={() => navigate(`${customerID}`)}
+      height='5rem'
+      sx={{ cursor: "pointer" }}
+    >
+      <Table.Row.Cell>{customerID} </Table.Row.Cell>
+      <Table.Row.Cell>{customerShortName} </Table.Row.Cell>
+      <Table.Row.Cell>{address}</Table.Row.Cell>
+      <Table.Row.Cell>{city}</Table.Row.Cell>
+      <Table.Row.Cell>
+        <StatusTag status={customerStatus || "none"} />
+      </Table.Row.Cell>
     </Table.Row>
   );
 }
-function CustomerCell({
-  text,
-}: {
-  text: string | number | string[] | undefined;
-}) {
-  return (
-    <Td textAlign='center' lineHeight='unset'>
-      {text}
-    </Td>
-  );
-}
-
 export default CustomerRow;

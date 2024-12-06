@@ -1,5 +1,6 @@
 import { Tag } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
+import { CustomerStatus } from "../features/customers/customers";
 
 const statusToColor: { [index: string]: string } = {
   IN_SERVICE: "blue",
@@ -11,7 +12,7 @@ const statusToColor: { [index: string]: string } = {
   none: "white",
 };
 
-function StatusTag({ status }: { status: string }) {
+function StatusTag({ status }: { status: CustomerStatus | "none" }) {
   const { t } = useTranslation("customers", { keyPrefix: "status" });
 
   const statusString = status || "none";

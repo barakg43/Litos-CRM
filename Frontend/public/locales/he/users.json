@@ -1,0 +1,11 @@
+{
+  "table": {
+    "username": "שם משתמש",
+    "fullName": "שם מלא",
+    "role": "תפקיד",
+    "enabled": "מופעל",
+    "createdAt": "תאריך הרשמה",
+    "save-button": "שמירה"
+  },
+  "roles": { "ADMIN": "מנהל מערכת", "USER": "משתמש רגיל" }
+}

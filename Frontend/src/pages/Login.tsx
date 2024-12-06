@@ -1,5 +1,7 @@
+import LoginComponent from "../features/auth/LoginComponent";
+
 function Login() {
-  return <div>Login</div>;
+  return <LoginComponent />;
 }
 
 export default Login;

@@ -1,4 +1,4 @@
-import { HStack, Text } from "@chakra-ui/react";
+import { HStack, SystemStyleObject, Text } from "@chakra-ui/react";
 import {
   JSXElementConstructor,
   ReactElement,
@@ -9,6 +9,7 @@ import {
 export function DetailRow({
   label,
   value,
+  sx,
 }: {
   label: string;
   value:
@@ -21,10 +22,11 @@ export function DetailRow({
     | null
     | undefined;
   useDivider?: boolean;
+  sx?: SystemStyleObject | undefined;
 }) {
   return (
-    <HStack>
-      <Text as='span' fontWeight={500}>
+    <HStack sx={sx} as='span'>
+      <Text as='span' fontWeight={600}>
         {label}:
       </Text>
       <Text> {value}</Text>

@@ -1,6 +1,7 @@
 package main.server.sql.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import main.server.sql.dto.reminder.ePeriodKind;
@@ -50,8 +51,9 @@ public class ServiceContractEntity {
 	@Column
 	private Byte number;
 
+	@Size(max = 500)
 	@Column
-	private String contactDescription;
+	private String contractDescription;
 
 	@Column
 	private Boolean renewed = false;

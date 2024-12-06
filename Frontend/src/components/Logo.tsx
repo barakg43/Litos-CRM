@@ -1,26 +1,9 @@
 import { Container, Image } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-
-// const StyledLogo = styled.div`
-//   text-align: center;
-//   width: inherit;
-//   min-height: 5.25rem;
-
-//   background-color: var(--color-primary-950);
-//   /* padding-bottom: var(--scale-00); */
-//   /* margin-bottom: var(--scale-5); */
-// `;
-
-// const Img = styled.img`
-//   padding: var(--size-2) var(--size-2) 0 var(--size-2);
-//   /* max-width: 5rem; */
-//   height: auto;
-//   max-height: 5.25rem;
-//   width: auto;
-// `;
-
+import { isDevelopmentEnvironment } from "../services/utils";
+const imgSrc =
+  (isDevelopmentEnvironment ? "" : "/quik") + "/assets/logo/logo.webp";
 function Logo() {
-  const imgSrc = "/quik/assets/logo/logo.webp";
   const navigate = useNavigate();
   return (
     <Container centerContent maxHeight='11rem'>

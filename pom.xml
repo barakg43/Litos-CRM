@@ -26,18 +26,26 @@
         <npm.version>10.2.3</npm.version>
         <node.version>v20.10.0</node.version>
         <lombok.version>1.18.30</lombok.version>
+        <jsonwebtoken.version>0.12.6</jsonwebtoken.version>
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <artifactId>quik</artifactId>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <start.class>main.server.ServerApplication</start.class>
+
+
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -122,6 +130,30 @@
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <!--Authentication-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jsonwebtoken.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <!--        https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api-->
+
     </dependencies>
     <build>
         <sourceDirectory>Backend/src</sourceDirectory>
@@ -129,57 +161,57 @@
 
         <plugins>
 
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>${frontend-maven-plugin.version}</version>
+            <!--            <plugin>-->
+            <!--                <groupId>com.github.eirslett</groupId>-->
+            <!--                <artifactId>frontend-maven-plugin</artifactId>-->
+            <!--                <version>${frontend-maven-plugin.version}</version>-->
 
-                <executions>
-                    <execution>
-                        <!-- optional: you don't really need execution ids, but it looks nice in your build log. -->
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <!-- optional: default phase is "generate-resources" -->
-                        <phase>generate-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        &lt;!&ndash; optional: you don't really need execution ids, but it looks nice in your build log. &ndash;&gt;-->
+            <!--                        <id>install node and npm</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>install-node-and-npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        &lt;!&ndash; optional: default phase is "generate-resources" &ndash;&gt;-->
+            <!--                        <phase>generate-resources</phase>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>npm install</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
 
-                        <!-- optional: default phase is "generate-resources" -->
-                        <phase>generate-resources</phase>
+            <!--                        &lt;!&ndash; optional: default phase is "generate-resources" &ndash;&gt;-->
+            <!--                        <phase>generate-resources</phase>-->
 
-                        <configuration>
-                            <!-- optional: The default argument is actually
-                            "install", so unless you need to run some other npm command,
-                            you can remove this whole <configuration> section.
-                            -->
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npm run build</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run build</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
+            <!--                        <configuration>-->
+            <!--                            &lt;!&ndash; optional: The default argument is actually-->
+            <!--                            "install", so unless you need to run some other npm command,-->
+            <!--                            you can remove this whole <configuration> section.-->
+            <!--                            &ndash;&gt;-->
+            <!--                            <arguments>install</arguments>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>npm run build</id>-->
+            <!--                        <phase>generate-resources</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <arguments>run build</arguments>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
 
-                <!-- optional -->
-                <configuration>
-                    <nodeVersion>${node.version}</nodeVersion>
-                    <npmVersion>${npm.version}</npmVersion>
-                    <workingDirectory>Frontend</workingDirectory>
-                </configuration>
-            </plugin>
+            <!--                &lt;!&ndash; optional &ndash;&gt;-->
+            <!--                <configuration>-->
+            <!--                    <nodeVersion>${node.version}</nodeVersion>-->
+            <!--                    <npmVersion>${npm.version}</npmVersion>-->
+            <!--                    <workingDirectory>Frontend</workingDirectory>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -244,7 +276,31 @@
                     <!--                   -->
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>run-tests</id>
+                        <goals>
+                            <goal>test-run</goal>
+                            
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

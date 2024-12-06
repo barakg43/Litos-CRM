@@ -1,10 +1,10 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 import eslint from "vite-plugin-eslint";
-
+const isDevEnv = process.env.NODE_ENV === "development";
 export default defineConfig({
   plugins: [react(), eslint()],
-  base: "/quik",
+  base: isDevEnv ? "" : "/quik",
   // server: {
   //   proxy: {
   //     // string shorthand: http://localhost:5173/foo -> http://localhost:4567/foo

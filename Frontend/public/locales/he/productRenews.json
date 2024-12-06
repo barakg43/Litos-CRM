@@ -1,6 +1,17 @@
 {
+  "customerID": "מספר לקוח",
+  "custShortName": "שם לקוח",
+  "systemDetailID": "מספר תזכורת",
+  "productDetailDescription": "תיאור מוצר",
+  "notes1": "הערות",
+  "notes2": "הערות 2",
+  "notes3": "הערות 3",
+  "notes4": " הערות 4",
+  "validityTill": "תוקף",
+  "price": "מחיר",
   "renew-table": {
-    "header": "תזכורת"
+    "header": "תזכורת לחידוש מוצר",
+    "renew-button": "חידוש"
   },
   "delete": {
     "confirmation": "האם אתה בטוח שברצונך למחוק את החיוב?",

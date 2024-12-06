@@ -7,7 +7,6 @@ function Sidebar() {
     <VStack
       justifyContent='flex-start'
       gap='5rem'
-      w='20rem'
       as='nav'
       borderInlineEnd={"2px solid var(--color-primary-300)"}
       boxShadow='dark-lg'

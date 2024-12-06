@@ -3,6 +3,9 @@ package main.server.sql.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import main.server.ServerConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +14,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
@@ -22,13 +26,14 @@ import static main.server.ServerConstants.SQL_YAML_CONFIG_LOCATION;
 @Configuration
 public class SqlConnectionManger {
 	private final String sqlConfigurationYamlFilePath = SQL_YAML_CONFIG_LOCATION;
-
+	private final Logger sqlLogger;
 	private DataSource dataSourceConfig;
 	private SqlConfiguration sqlConnectionConfiguration;
 	private Connection sqlConnection;
 	private SimpleJdbcCall simpleJdbcCall;
 
 	public SqlConnectionManger() {
+		sqlLogger = LogManager.getLogger(ServerConstants.SQL_CLIENT_LOGGER_NAME);
 	}
 
 	public void initializeSqlConnectionConfig() throws SQLException, IOException {
@@ -41,16 +46,22 @@ public class SqlConnectionManger {
 	}
 
 	@Bean("sqlConfig")
-	public SqlConfiguration createSqlConfigurationFromFile() throws IOException {
+	public SqlConfiguration createSqlConfigurationFromFile() {
 		ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 		SqlConfiguration sqlConfiguration;
 		FileReader fileReader;
 
-		fileReader = new FileReader(sqlConfigurationYamlFilePath);
-		sqlConfiguration = yamlMapper.readValue(fileReader, SqlConfiguration.class);
+		try {
+			fileReader = new FileReader(sqlConfigurationYamlFilePath);
+			sqlConfiguration = yamlMapper.readValue(fileReader, SqlConfiguration.class);
+		} catch (IOException e) {
+			sqlLogger.error(e.getMessage() + "\nAbsolute path: " + new File(".").getAbsolutePath());
+			throw new RuntimeException(e);
+		}
 
 		return sqlConfiguration;
 	}
+
 
 	@Bean
 	@Primary

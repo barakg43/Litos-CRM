@@ -24,27 +24,30 @@ public class ProductReminderEntity {
 	@Size(max = 50)
 	@Nationalized
 	@Column(name = "SystemDetailDescription", length = 50)
-	private String systemDetailDescription;
+	private String productDetailDescription;
 
 	@Size(max = 50)
 	@Nationalized
 	@Column(name = "InternalIP", length = 50)
-	private String internalIP;
+	private String notes1;
 
 	@Size(max = 50)
 	@Nationalized
 	@Column(name = "ExternalIP", length = 50)
-	private String externalIP;
+	private String notes2;
 
 	@Size(max = 50)
 	@Nationalized
 	@Column(name = "UserName", length = 50)
-	private String userName;
+	private String notes3;
 
 	@Size(max = 50)
 	@Nationalized
 	@Column(name = "Password", length = 50)
-	private String password;
+	private String notes4;
+
+	@Column(name = "Price", nullable = false, precision = 10, scale = 8, length = 9)
+	private Integer price;
 
 	@Column(name = "CustomerID", nullable = false)
 	private Short customerID;

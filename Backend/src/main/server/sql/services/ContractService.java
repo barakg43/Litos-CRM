@@ -1,85 +1,92 @@
 package main.server.sql.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import main.server.sql.bulider.SqlQueryBuilder;
+import main.server.sql.dto.ListSubset;
 import main.server.sql.dto.reminder.ContractRecord;
-import main.server.sql.dto.reminder.InvoiceReminderRecord;
-import main.server.sql.dto.reminder.ProductReminderRecord;
 import main.server.sql.dto.reminder.ePeriodKind;
 import main.server.sql.entities.CustomerEntity;
 import main.server.sql.entities.ServiceContractEntity;
-import main.server.sql.function.SqlFunctionExecutor;
 import main.server.sql.repositories.CustomerRepository;
 import main.server.sql.repositories.ServiceContractRepository;
 import main.server.uilities.UtilityFunctions;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+import static main.server.uilities.UtilityFunctions.getPageObject;
 
 @Service
 public class ContractService {
-	private final SqlFunctionExecutor sqlFunctionExecutor;
 	private final ServiceContractRepository serviceContractRepository;
 	private final CustomerRepository customerRepository;
 
-	public ContractService(SqlFunctionExecutor sqlFunctionExecutor,
-						   ServiceContractRepository serviceContractRepository,
-						   CustomerRepository customerRepository) {
-		this.sqlFunctionExecutor = sqlFunctionExecutor;
+	public ContractService(
+			ServiceContractRepository serviceContractRepository,
+			CustomerRepository customerRepository) {
+
 		this.serviceContractRepository = serviceContractRepository;
 		this.customerRepository = customerRepository;
 	}
 
-	public List<ProductReminderRecord> getRenews() {
-		return sqlFunctionExecutor.executeTableValueFunction("fncSystemsDetailsForDate", ProductReminderRecord.class,
-				LocalDateTime.now());
 
+	public ListSubset<ContractRecord> getServiceRenewRemindersInPeriodTime(int monthsAfterExpiration,
+																		   int daysBeforeExpiration,
+																		   Integer pageNumber,
+																		   Integer pageSize) {
+		Pageable page = getPageObject(pageNumber, pageSize);
+		Timestamp startDate = UtilityFunctions.postDateByMonthAmountFromToday(-monthsAfterExpiration);
+		Timestamp finishDate = UtilityFunctions.postDateByDaysAmountFromToday(daysBeforeExpiration);
+		List<ServiceContractEntity> serviceContractEntities =
+				serviceContractRepository
+						.findAllByRenewedIsFalseAndFinishDateOfContractBetweenOrderByFinishDateOfContractAsc(
+								startDate,
+								finishDate,
+								page
+						);
+		long totalItemInPeriod = serviceContractRepository.countByRenewedFalseAndFinishDateOfContractBetween(startDate,
+				finishDate);
+		List<ContractRecord> subsetListRecords = serviceContractEntities.stream().map(ContractRecord::new).toList();
+
+		return new ListSubset<>(subsetListRecords, totalItemInPeriod);
 	}
 
-	public List<ContractRecord> getServiceRenewRemindersInPeriodTime(int monthsAfterExpiration,
-																	 int daysBeforeExpiration) {
+	public ListSubset<ContractRecord> getServiceRenewRemindersForCustomer(short customerID, Integer pageNumber,
+																		  Integer pageSize) {
+		Pageable page = getPageObject(pageNumber, pageSize);
 
-//        ( SELECT     TOP 100 PERCENT ReminderID, DateOfReminder, TimeOfReminder, ReminderRemark, Closed,
-//        ResponsibleUserName
-//        FROM         dbo.tbReminders
-//        WHERE     (Closed = 0) AND (DateOfReminder < DATEADD(day, 1, @Date))
-//        ORDER BY DateOfReminder, TimeOfReminder )
-//		String sqlQuery = SqlQueryBuilder.getNewBuilder()
-//				.from("dbo.tbReminders")
-//				.select("ReminderID", "DateOfReminder", "TimeOfReminder", "ReminderRemark", "Closed",
-//						"ResponsibleUserName")
-//				.where().equal("Closed", 0, false).and().lessOrEqualThan("DateOfReminder", ePeriodKind.now(),
-//						true)
-//				.orderBy(new String[]{"DateOfReminder", "TimeOfReminder"})
-//				.build();
-//		return sqlFunctionExecutor.supplyTableValueQuery(sqlQuery, ServiceRenewReminderRecord.class);
-////        return sqlFunctionExecutor.executeTableValueFunction("fncReminders", ServiceRenewReminderRecord.class,
-////        LocalDateTime.now());
-		return serviceContractRepository.getAllContractsRenewReminderInPeriodTime(
-				UtilityFunctions.postDateByMonthAmount(LocalDate.now(), -monthsAfterExpiration),
-				UtilityFunctions.postDateByDaysAmount(LocalDate.now(), -daysBeforeExpiration)
-		);
+		Optional<CustomerEntity> customerToFind = customerRepository.findById(customerID);
+		if (customerToFind.isEmpty())
+			throw new EntityNotFoundException("cannot find customer with id of " + customerID);
+
+		List<ServiceContractEntity> serviceContractListAllByCustomer =
+				serviceContractRepository.findAllByCustomerOrderByStartDateOfContractDesc(customerToFind.get(), page);
+		long totalItem = serviceContractRepository.countByCustomer(customerToFind.get());
+		return new ListSubset<>(serviceContractListAllByCustomer.
+				stream().map(ContractRecord::new).toList(), totalItem);
 	}
 
 	@Transactional
-	public void updateContract(Long contractId, ContractRecord contractRecord) {
+	public void updateContract(Long contractId, ContractRecord contractRecord) throws IndexOutOfBoundsException,
+			IllegalArgumentException {
 		ServiceContractEntity serviceContractEntity = serviceContractRepository
 				.getContractByContractID(contractId);
 		if (serviceContractEntity == null)
 			throw new IndexOutOfBoundsException();
 		serviceContractEntity.setContractPrice(contractRecord.contractPrice());
-		serviceContractEntity.setContactDescription(contractRecord.contactDescription());
+		serviceContractEntity.setContractDescription(contractRecord.contractDescription());
 		serviceContractEntity.setPeriodKind(contractRecord.periodKind());
 		serviceContractEntity.setStartDateOfContract(contractRecord.startDateOfContract());
 		setContactFinishDateBaseOnStartDayForContract(contractRecord.periodKind(), serviceContractEntity,
 				contractRecord.startDateOfContract());
-		serviceContractRepository.save(serviceContractEntity);
+		validAndSaveToRepository(serviceContractEntity);
+
 	}
 
-	public void addNewContract(ContractRecord contractRecord) {
+	public Short addNewContract(ContractRecord contractRecord) throws IllegalStateException, IllegalArgumentException {
 		ServiceContractEntity serviceContractEntity = new ServiceContractEntity();
 		if (customerRepository.existsById(contractRecord.customerID())) {
 			CustomerEntity customerEntity = customerRepository.getReferenceById(contractRecord.customerID());
@@ -89,12 +96,13 @@ public class ContractService {
 			}
 			serviceContractEntity.setCustomerID(contractRecord.customerID());
 			serviceContractEntity.setContractPrice(contractRecord.contractPrice());
-			serviceContractEntity.setContactDescription(contractRecord.contactDescription());
+			serviceContractEntity.setContractDescription(contractRecord.contractDescription());
 			serviceContractEntity.setPeriodKind(contractRecord.periodKind());
 			serviceContractEntity.setStartDateOfContract(contractRecord.startDateOfContract());
 			setContactFinishDateBaseOnStartDayForContract(contractRecord.periodKind(), serviceContractEntity,
 					contractRecord.startDateOfContract());
-			saveContractAndUpdateActiveContractInCustomer(serviceContractEntity);
+			CustomerEntity savedUpdatedCustomer = saveContractAndUpdateActiveContractInCustomer(serviceContractEntity);
+			return savedUpdatedCustomer.getCustomerID();
 		} else {
 			throw new IllegalArgumentException("customer with this id not exist");
 		}
@@ -103,7 +111,7 @@ public class ContractService {
 	}
 
 	@Transactional
-	public void deleteContractByID(Long contractID) {
+	public void deleteContractByID(Long contractID) throws IndexOutOfBoundsException {
 
 		if (serviceContractRepository.existsById(contractID))
 			serviceContractRepository.deleteById(contractID);
@@ -113,7 +121,7 @@ public class ContractService {
 	}
 
 	@Transactional
-	public void setContactReminderState(Long contactID, boolean toEnable) {
+	public void setContactReminderState(Long contactID, boolean toEnable) throws IndexOutOfBoundsException {
 		ServiceContractEntity serviceContractEntity = serviceContractRepository
 				.getContractByContractID(contactID);
 		if (serviceContractEntity == null)
@@ -128,34 +136,37 @@ public class ContractService {
 	}
 
 	@Transactional
-	public void renewContractForPeriod(Long contractId, ContractRecord contractRecord) {
+	public void renewContractForPeriod(Long contractId, ContractRecord contractRecord) throws IndexOutOfBoundsException, IllegalArgumentException {
 		//close the current contract
 		ServiceContractEntity currentContract =
 				serviceContractRepository.getContractByContractID(contractId);
 		if (currentContract == null)
 			throw new IndexOutOfBoundsException();
 		currentContract.setRenewed(true);
-		currentContract.setContractPrice(contractRecord.contractPrice());
-		currentContract.setContactDescription(contractRecord.contactDescription());
+//		currentContract.setContractPrice(contractRecord.contractPrice());
+//		currentContract.setContractDescription(contractRecord.contractDescription());
 		//create new contract
 		ServiceContractEntity newContract = new ServiceContractEntity();
 		newContract.setCustomerID(currentContract.getCustomerID());
-//		newContract.setCustomer(currentContract.getCustomer());
 		Timestamp startDateForNewContract =
 				UtilityFunctions.postDateByDaysAmount(currentContract.getFinishDateOfContract(), 1);
 		newContract.setStartDateOfContract(startDateForNewContract);
 		setContactFinishDateBaseOnStartDayForContract(contractRecord.periodKind(), newContract,
 				startDateForNewContract);
 		newContract.setContractPrice(contractRecord.contractPrice());
+		newContract.setContractDescription(contractRecord.contractDescription());
 		newContract.setPeriodKind(contractRecord.periodKind());
-		serviceContractRepository.save(currentContract);
+		UtilityFunctions.validEntityValidations(currentContract);
+		validAndSaveToRepository(currentContract);
 		saveContractAndUpdateActiveContractInCustomer(newContract);
 	}
 
-	private void saveContractAndUpdateActiveContractInCustomer(ServiceContractEntity newContract) {
-		ServiceContractEntity savedContract = serviceContractRepository.save(newContract);
-		savedContract.getCustomer().setActiveContractID(savedContract.getContractID());
-		customerRepository.save(savedContract.getCustomer());
+	private CustomerEntity saveContractAndUpdateActiveContractInCustomer(ServiceContractEntity newContract) {
+		UtilityFunctions.validEntityValidations(newContract);
+		ServiceContractEntity savedContract = validAndSaveToRepository(newContract);
+		CustomerEntity customerToUpdate = customerRepository.getReferenceById(savedContract.getCustomerID());
+		customerToUpdate.setActiveContractID(savedContract.getContractID());
+		return customerRepository.save(customerToUpdate);
 	}
 
 	private void setContactFinishDateBaseOnStartDayForContract(ePeriodKind periodKind,
@@ -166,23 +177,8 @@ public class ContractService {
 				periodInMonths));
 	}
 
-
-	@Deprecated
-	public List<InvoiceReminderRecord> getInvoiceReminders() {
-//		SELECT     dbo.fncCustNameForActiveContractID(contractID) AS custShortName, contractID, dateOfDebit,
-//		invoiceNum, renewal
-//		FROM         dbo.tbInvoicesForContracts
-//		WHERE     (invoiceNum IS NULL) AND (dateOfDebit < DATEADD(day, 1, @Date))
-		String sqlQuery = SqlQueryBuilder.getNewBuilder()
-				.from("tbInvoicesForContracts")
-				.select("dbo.fncCustNameForActiveContractID(contractID) AS custShortName, contractID, dateOfDebit, " +
-						"invoiceNum, renewal")
-				.where()
-				.is("invoiceNum", "NULL", false)
-				.and().lessOrEqualThan("dateOfDebit", LocalDate.now(), true)
-				.build();
-		System.out.println(sqlQuery);
-		return sqlFunctionExecutor.supplyTableValueQuery(sqlQuery, InvoiceReminderRecord.class);
-
+	private ServiceContractEntity validAndSaveToRepository(ServiceContractEntity serviceContractEntity) {
+		UtilityFunctions.validEntityValidations(serviceContractEntity);
+		return serviceContractRepository.save(serviceContractEntity);
 	}
 }

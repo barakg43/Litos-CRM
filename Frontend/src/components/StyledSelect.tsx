@@ -1,8 +1,8 @@
 import {
+  SelectProps as ChakraSelectProps,
   LayoutProps,
   Select,
   forwardRef,
-  SelectProps as ChakraSelectProps,
 } from "@chakra-ui/react";
 import { ChangeEventHandler, Key } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
@@ -22,26 +22,30 @@ type SelectProps = {
 };
 
 const StyledSelect = forwardRef<ChakraSelectProps & SelectProps, "select">(
-  ({ options, value, width, register, onChange, ...props }, ref) => (
-    <Select
-      ref={ref}
-      variant='flushed'
-      value={value}
-      onChange={onChange}
-      {...props}
-      display='flex'
-      // textAlign='end'
-      sx={{ textAlignLast: "center" }}
-      width={width}
-      {...register}
-    >
-      {options.map((option) => (
-        <option value={option.value} key={option.value as Key}>
-          {option.label}
-        </option>
-      ))}
-    </Select>
-  )
+  ({ options, value, width, register, onChange, ...props }, ref) => {
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      onChange?.(e);
+    };
+    return (
+      <Select
+        ref={ref}
+        variant='flushed'
+        onChange={handleChange}
+        defaultValue={value}
+        display='flex'
+        sx={{ textAlignLast: "center" }}
+        width={width}
+        {...props}
+        {...register}
+      >
+        {options.map((option) => (
+          <option value={option.value} key={option.value as Key}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
+    );
+  }
 );
 
 export default StyledSelect;

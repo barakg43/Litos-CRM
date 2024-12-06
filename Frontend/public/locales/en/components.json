@@ -1,0 +1,24 @@
+{
+  "empty": "{{resource}} לא קיימים נתונים על",
+  "pagination": {
+    "button": {
+      "next": "הבא",
+      "previous": "הקודם"
+    },
+    "summary": {
+      "showing": "מראה",
+      "to": "עד",
+      "of": "מתוך",
+      "results": "תוצאות"
+    }
+  },
+  "buttons": {
+    "edit": "ערוך",
+    "delete": "מחק",
+    "add": "הוסף",
+    "cancel": "בטל",
+    "save": "שמור",
+    "update": "עדכן"
+  },
+  "delete-alert": "Are you sure you want to delete {{resourceName}}?\nYou can't undo this action afterwards."
+}

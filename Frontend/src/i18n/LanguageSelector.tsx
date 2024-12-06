@@ -1,3 +1,4 @@
+import { Box, SystemStyleObject } from "@chakra-ui/react";
 import StyledSelect, { Option } from "../components/StyledSelect";
 import { useSwitchLanguage } from "./useSwitchLanguage";
 
@@ -9,20 +10,22 @@ const langOption: Option[] = [
   },
 ];
 
-function LanguageSelector() {
+function LanguageSelector({ style }: { style?: SystemStyleObject }) {
   const { lang, setLang } = useSwitchLanguage();
   function handleLangChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setLang(e.target.value);
   }
 
   return (
-    <StyledSelect
-      options={langOption}
-      value={lang}
-      onChange={handleLangChange}
-      width='10rem'
-      fontSize='1.2rem'
-    />
+    <Box as='span' sx={style}>
+      <StyledSelect
+        options={langOption}
+        value={lang}
+        onChange={handleLangChange}
+        width='10rem'
+        fontSize='1.2rem'
+      />
+    </Box>
   );
 }
 

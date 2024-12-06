@@ -1,21 +1,44 @@
 {
-  "renew-table": {
-    "header": "תזכורת"
+  "contractID": "מספר חוזה",
+  "customerID": "מספר לקוח",
+  "customerShortName": "שם לקוח",
+  "startDateOfContract": "תאריך התחלה",
+  "finishDateOfContract": "תאריך סיום",
+  "contractPrice": "מחיר חוזה",
+  "periodKind": "תקופת שירות",
+  "contractDescription": "פרטים נוספים",
+  "cancel-button": "ביטול",
+  "renew-button": "חידוש",
+  "renew-title": "חידוש חוזה שירות",
+  "period": {
+    "MONTHLY": "חודשי",
+    "QUARTERLY": "רבעוני",
+    "YEARLY": "שנתי"
   },
+  "form-errors": {
+    "too-big-text": "השדה מוגבל ל {{length}} תווים",
+    "required": "שדה זה נדרש"
+  },
+  "renew-table": {
+    "header": "תזכורת",
+    "title": "תזכורות לחוזי שירות",
+    "error-message-fetch": "אירעה שגיאה בטעינת התזכורות"
+  },
+  "title": "חוזה שירות",
   "delete": {
     "confirmation": "האם אתה בטוח שברצונך למחוק את החיוב?",
-    "toast-title": "מחיקת חידוש מוצרים",
+    "toast-title": "מחיקת חוזה שירות",
     "toast-message-success": "התזכורת נמחקה בהצלחה",
     "toast-message-error": "אירעה שגיאה במחיקת התזכורת"
   },
-  "renew": {
-    "button": "חידוש",
+  "add": {
+    "button": "הוספת חוזה שירות",
     "toast-title": "חידוש מוצרים",
     "toast-message-success": "התזכורת חודשה בהצלחה",
     "toast-message-error": "אירעה שגיאה בחידוש התזכורת"
   },
   "update": {
-    "title": "עדכון חידוש מוצרים",
+    "title": "עדכון חוזה שירות",
     "toast-title": "עדכון חידוש מוצרים",
     "toast-message-success": "התזכורת עודכנה בהצלחה",
     "toast-message-error": "אירעה שגיאה בעדכון התזכורת",

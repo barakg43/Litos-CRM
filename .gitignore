@@ -141,7 +141,7 @@ buildNumber.properties
 
 # logs
 /stacktrace.log
-/test/reports
+/Backend/test/reports
 /logs
 
 # project release file
@@ -162,3 +162,5 @@ Frontend/src/components/side.html
 /Backend/resources/static/
 /Frontend/node/
 /Frontend/node_modules/
+
+conf/
