@@ -1,8 +1,7 @@
 import { TFunction } from "i18next";
 import { HTMLInputTypeAttribute } from "react";
 import { FieldError, UseFormRegister } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import FormRow from "../../components/FormRow.tsx";
+import ExtendFormRow from "../../components/ExtendFormRow.tsx";
 import { CustomerFullDataType } from "../customers/customers";
 
 type FormRowCustomerProps = {
@@ -24,25 +23,36 @@ function FormRowCustomer({
   register,
   type,
 }: FormRowCustomerProps) {
-  const { t } = useTranslation("customers");
   return (
-    <FormRow
-      label={t("details." + label)}
+    <ExtendFormRow
+      fieldName={label}
+      registerFn={register}
+      translationNS='customers'
+      keyPrefix='details'
+      error={error}
       defaultValue={defaultValue}
-      error={error?.message}
-      register={register(label, {
-        required: isRequired ? t("form.required") : undefined,
-        maxLength:
-          maxLength != undefined
-            ? {
-                value: maxLength,
-                message: t("form.too-big-text", { length: maxLength }),
-              }
-            : undefined,
-      })}
-      isRequired={isRequired}
+      maxLength={maxLength}
       type={type}
+      isRequired={isRequired}
     />
   );
+
+  // <FormRow
+  //   label={t("details." + label)}
+  //   defaultValue={defaultValue}
+  //   error={error?.message}
+  //   register={register(label, {
+  //     required: isRequired ? t("form.required") : undefined,
+  //     maxLength:
+  //       maxLength != undefined
+  //         ? {
+  //             value: maxLength,
+  //             message: t("form.too-big-text", { length: maxLength }),
+  //           }
+  //         : undefined,
+  //   })}
+  //   isRequired={isRequired}
+  //   type={type}
+  // />
 }
 export default FormRowCustomer;

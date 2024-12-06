@@ -2,8 +2,7 @@ import { SystemStyleObject } from "@chakra-ui/react";
 import { TFunction } from "i18next";
 import { HTMLInputTypeAttribute } from "react";
 import { FieldError, UseFormRegister } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import FormRow from "../../components/FormRow";
+import ExtendFormRow from "../../components/ExtendFormRow";
 import { RenewServiceContract } from "./serviceRenews";
 
 type ServiceFormRowProps = {
@@ -27,24 +26,16 @@ function ServiceFormRow({
   type,
   sx,
 }: ServiceFormRowProps) {
-  const { t } = useTranslation("serviceRenews");
   return (
-    <FormRow
-      label={t(label)}
+    <ExtendFormRow
+      fieldName={label}
+      registerFn={register}
+      translationNS='serviceRenews'
+      error={error}
       defaultValue={defaultValue}
-      error={error?.message}
-      register={register(label, {
-        required: isRequired ? t("form.required") : undefined,
-        maxLength:
-          maxLength != undefined
-            ? {
-                value: maxLength,
-                message: t("form.too-big-text", { length: maxLength }),
-              }
-            : undefined,
-      })}
-      isRequired={isRequired}
+      maxLength={maxLength}
       type={type}
+      isRequired={isRequired}
       sx={sx}
     />
   );
