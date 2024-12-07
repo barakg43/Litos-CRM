@@ -55,7 +55,6 @@ function ProductRenewPanel({
           isRequired
           sx={{ gridColumn: "span 2" }}
         />
-
         <ExtendFormRow
           fieldName='validityTill'
           registerFn={register}

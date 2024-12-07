@@ -31,7 +31,8 @@ public class UserController {
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	@GetMapping("")
 	public List<UserSecurityProperties> allUsersSecurityProperties() {
-		return userService.allUsers()
+		UserEntity currentUser = UserService.getCurrentlyAuthenticatedUser();
+		return userService.allUsersWithoutCurrentUser(currentUser)
 				.stream()
 				.map(UserSecurityProperties::new)
 				.toList();
