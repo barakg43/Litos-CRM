@@ -6,7 +6,8 @@ import ProductHistoryTable from "./product-renews/ProductHistoryTable";
 import ServiceRenewsHistoryTable from "./service-renews/ServiceRenewsHistoryTable";
 function ChildTabs() {
   const { t } = useTranslation("customers", { keyPrefix: "child" });
-  const [tabIndex, setTabIndex] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setTabIndex] = useState(0);
   const isAdmin = useAuthStore((state) => state.isAdmin());
   const handleTabsChange = (index: number) => {
     setTabIndex(index);

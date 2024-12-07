@@ -1,11 +1,11 @@
-import RemindersTable from "../features/reminders/RemindersTable";
+// import RemindersTable from "../features/reminders/RemindersTable";
 
-function Reminders() {
-  return (
-    <div>
-      <RemindersTable />
-    </div>
-  );
-}
+// function Reminders() {
+//   return (
+//     <div>
+//       <RemindersTable />
+//     </div>
+//   );
+// }
 
-export default Reminders;
+// export default Reminders;

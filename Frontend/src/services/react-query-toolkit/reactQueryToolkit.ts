@@ -19,6 +19,7 @@ import {
   EndpointDefinitions,
   ErrorFromBaseQuery,
   HooksWithUniqueNames,
+  MutationDefinition,
   MutationHookName,
   QueryDefinition,
   QueryHookName,
@@ -119,12 +120,21 @@ function buildHook<
     const hookName = `use${capitalize(
       endpointName
     )}Query` as QueryHookName<string>;
-    hookFn = buildQueryHook(baseQuery, definition);
+    hookFn = buildQueryHook(
+      baseQuery,
+      definition as QueryDefinition<QueryArg, BaseQuery, ResultType, TQueryKey>
+    );
     return { hookName, hookFn };
   } else if (isMutationDefinition(definition)) {
     const hookName = `use${capitalize(
       endpointName
     )}Mutation` as MutationHookName<string>;
+    const typedDefinition = definition as MutationDefinition<
+      QueryArg,
+      BaseQuery,
+      ResultType,
+      TQueryKey
+    >;
     hookFn = buildMutationHook<
       QueryArg,
       BaseQuery,
@@ -134,8 +144,9 @@ function buildHook<
     >({
       endpointName,
       baseQuery,
-      definition,
+      definition: typedDefinition,
     });
+
     return { hookName, hookFn };
   } else {
     throw new Error("invalid endpoint definition");

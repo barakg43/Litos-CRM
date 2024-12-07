@@ -1,12 +1,8 @@
-import { QueryKey } from "@tanstack/react-query";
 import { Mutex } from "async-mutex";
 import { AxiosError, AxiosRequestConfig } from "axios";
 import { httpClient } from "../axios";
 import { createApi } from "../react-query-toolkit/reactQueryToolkit";
-import {
-  BaseQueryFn,
-  EndpointDefinitions,
-} from "../react-query-toolkit/reactQueryToolkitType";
+import { BaseQueryFn } from "../react-query-toolkit/reactQueryToolkitType";
 import { StatusCodes } from "./httpStatusCodes";
 import { useAuthStore } from "./slices/useAuthStore";
 
@@ -40,7 +36,6 @@ export const baseQueryWithAuth: AxiosBaseQuery = async (args, api) => {
           undefined
         );
         if (refreshResult.data) {
-          //   api.dispatch(setAuth());
           // retry the initial query
           result = await axiosBaseQuery(args, signal);
         } else if (
