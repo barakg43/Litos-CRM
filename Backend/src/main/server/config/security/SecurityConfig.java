@@ -89,6 +89,7 @@ public class SecurityConfig {
 						.requestMatchers("/swagger-ui/**").permitAll()
 						.requestMatchers("/", "/index.html").permitAll()
 						.requestMatchers("/assets/**", "/locales/**").permitAll()
+						.requestMatchers("/mgmt/**").permitAll()
 						.anyRequest().authenticated()
 				)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))

@@ -26,12 +26,12 @@ public class GlobalEndpointsController {
 		return "forward:/index.html";
 	}
 
-	@GetMapping("/health")
+	@GetMapping("mgmt/health")
 	public ResponseEntity<String> getServerHealth() {
 		return new ResponseEntity<>(healthResponse, null, 200);
 	}
 
-	@GetMapping("/get-pwd")
+	@GetMapping("mgmt/get-pwd")
 	public String getTest() {
 		System.out.println("test!");
 		return printPWD();
