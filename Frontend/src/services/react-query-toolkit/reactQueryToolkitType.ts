@@ -22,7 +22,7 @@ export type QueryDefinition<
   TQueryKey extends QueryKey = QueryKey
 > = BaseEndpointDefinition<QueryArg, BaseQuery, ResultType> &
   QueryExtraOptions<TQueryKey, QueryArg>;
-type MutationDefinition<
+export type MutationDefinition<
   QueryArg,
   BaseQuery extends BaseQueryFn,
   ResultType,
@@ -72,9 +72,6 @@ type QueryArgFrom<D extends BaseEndpointDefinition<any, any, any>> =
 type ResultTypeFrom<D extends BaseEndpointDefinition<any, any, any>> =
   D extends BaseEndpointDefinition<any, any, infer RT> ? RT : unknown;
 
-type QueryKeyTypeFrom<D extends EndpointDefinition<any, any, any, any>> =
-  D extends EndpointDefinition<any, any, any, infer QK> ? QK : unknown;
-
 export type ResultHandlerFn<QueryArg, ResultType> = (
   originalArgs: OptionalIfVoid<QueryArg>,
   result: ResultType
@@ -111,8 +108,8 @@ export type BaseQueryArg<T extends (arg: any, ...args: any[]) => any> =
 type BaseQueryExtraOptions<BaseQuery extends BaseQueryFn> =
   Parameters<BaseQuery>[2];
 
-declare const _NEVER: unique symbol;
-type NEVER = typeof _NEVER;
+// declare const _NEVER: unique symbol;
+// type NEVER = typeof _NEVER;
 
 interface QueryExtraOptions<TQueryKey extends QueryKey, QueryArg> {
   type: DefinitionType.query;

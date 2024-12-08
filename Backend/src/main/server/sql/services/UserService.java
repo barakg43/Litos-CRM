@@ -4,7 +4,6 @@ import jakarta.persistence.EntityNotFoundException;
 import main.server.sql.entities.UserEntity;
 import main.server.sql.repositories.UserRepository;
 import main.server.user.UpdateUserSecurityPropertiesRequest;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +20,29 @@ public class UserService {
 	}
 
 	public static UserEntity getCurrentlyAuthenticatedUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (UserEntity) authentication.getPrincipal();
+		UserEntity user = null;
+		Object userRaw;
+		userRaw = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (userRaw instanceof UserEntity)
+			user = (UserEntity) userRaw;
+		return user;
 	}
 
 	public List<UserEntity> allUsers() {
 		List<UserEntity> users = new ArrayList<>();
 
 		userRepository.findAll().forEach(users::add);
+
+		return users;
+	}
+
+	public List<UserEntity> allUsersWithoutCurrentUser(UserEntity currentUser) {
+		List<UserEntity> users = new ArrayList<>();
+
+		userRepository.findAll().forEach(userEntity -> {
+			if (!userEntity.getUsername().equals(currentUser.getUsername()))
+				users.add(userEntity);
+		});
 
 		return users;
 	}

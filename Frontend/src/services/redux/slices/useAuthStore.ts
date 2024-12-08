@@ -1,7 +1,7 @@
 import { createSelectorFunctions } from "auto-zustand-selectors-hook";
 import { create } from "zustand";
 import { queryClient } from "../../../app/AppProviders";
-import { UserDetails } from "../../../features/auth/auth";
+import { UserDetails } from "../../../features/users/users";
 
 type State = {
   user: UserDetails | null;

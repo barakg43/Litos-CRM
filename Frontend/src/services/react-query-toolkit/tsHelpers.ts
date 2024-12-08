@@ -4,9 +4,12 @@ export function safeAssign<T extends object>(
 ) {
   Object.assign(target, ...args);
 }
+
 export type HasRequiredProps<T, True, False> = NonOptionalKeys<T> extends never
   ? False
   : True;
+type NoInfer<T> = [T][T extends unknown ? 0 : never];
+
 export type NonOptionalKeys<T> = {
   [K in keyof T]-?: undefined extends T[K] ? never : K;
 }[keyof T];

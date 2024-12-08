@@ -29,7 +29,10 @@ function AddEditProductReminderForm({
   const [addNewProductReminder, isAdding] = useAddNewProductReminderMutation();
   const [updateProductReminder, isUpdating] =
     useUpdateProductReminderMutation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isLoading = isAdding || isUpdating;
+  console.log("isLoading", isLoading);
+
   function onSubmitForm(data: RenewProductRecord) {
     if (productRenewToEdit.systemDetailID) {
       updateProductReminder({ ...data, systemDetailID });

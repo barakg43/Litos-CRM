@@ -33,7 +33,9 @@ function CustomerForm({
   const customerID = useCustomerIdParam();
   const [updateCustomerDetails, isUpdating] = useUpdateCustomerMutation();
   const [addNewCustomer, isAdding] = useAddNewCustomerMutation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const isSubmiting = isAdding || isUpdating;
+  console.log("isSubmiting", isSubmiting);
 
   const {
     customerName,
